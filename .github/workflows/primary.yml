@@ -37,8 +37,7 @@ jobs:
         run: npm install -g eas-cli
 
       - name: Login to Expo
-        run: |
-          echo ${{ secrets.EXPO_TOKEN }} | eas login
+        run: eas login
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
