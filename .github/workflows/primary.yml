@@ -36,12 +36,12 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Build for iOS
-        if: github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all' || (github.event.inputs.platform == '' && github.event_name == 'push')
-        run: |
-          eas build --platform ios --profile development --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      # - name: Build for iOS
+      #   if: github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all' || (github.event.inputs.platform == '' && github.event_name == 'push')
+      #   run: |
+      #     eas build --platform ios --profile development --non-interactive
+      #   env:
+      #     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build for Android
         if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' || (github.event.inputs.platform == '' && github.event_name == 'push')
