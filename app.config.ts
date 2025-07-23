@@ -67,6 +67,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         locationWhenInUsePermission: "Show current location on map.",
       },
     ],
+    [
+        "expo-notifications",
+    ],
   ],
   experiments: {
     typedRoutes: true,

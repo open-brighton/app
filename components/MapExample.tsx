@@ -8,7 +8,7 @@ export default function MapExample() {
       {/* Basic Map */}
       <Map
         style={styles.map}
-        initialCenter={[-0.1396, 50.8225]} // Brighton, UK
+        initialCenter={[-77.5855, 43.1334]} // Brighton, NY
         initialZoom={12}
         showUserLocation={true}
         onMapLoad={() => console.log("Map loaded successfully")}

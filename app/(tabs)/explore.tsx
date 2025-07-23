@@ -1,26 +1,16 @@
 import Map from "@/components/Map";
-import Progress from "@/components/Progress";
-import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
-import VStack from "@/components/VStack";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function ExploreScreen() {
   return (
-    <ThemedSafeAreaView>
-      <VStack container>
-        <View style={styles.mapContainer}>
-          <Map
-            style={styles.map}
-            initialCenter={[-0.1396, 50.8225]} // Brighton, UK
-            initialZoom={12}
-            showUserLocation={true}
-            onMapLoad={() => console.log("Map loaded")}
-          />
-        </View>
-        <Progress loop={true} size={150} style={styles.component} />
-      </VStack>
-    </ThemedSafeAreaView>
+    <Map
+      style={styles.map}
+      initialCenter={[-77.5855, 43.1334]} // Brighton, NY
+      initialZoom={12}
+      showUserLocation={true}
+      onMapLoad={() => console.log("Map loaded")}
+    />
   );
 }
 
