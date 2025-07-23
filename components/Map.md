@@ -13,31 +13,31 @@ This component uses `@rnmapbox/maps` to display an interactive map in the Open B
 
 ### 2. Configure the Access Token
 
-You need to update the access token in two places:
+The app now uses environment variables for secure token management. You need to set up two environment variables:
 
-#### A. In the Map Component
+#### A. Create Environment File
 
-Open `components/Map.tsx` and replace the placeholder token:
+Copy `env.example` to `.env` and add your tokens:
 
-```typescript
-const MAPBOX_ACCESS_TOKEN = "YOUR_MAPBOX_ACCESS_TOKEN"; // Replace with your actual token
+```bash
+cp env.example .env
 ```
 
-#### B. In the App Configuration
+#### B. Set Environment Variables
 
-Open `app.json` and update the Mapbox plugin configuration:
+Edit your `.env` file with your actual Mapbox tokens:
 
-```json
-[
-  "@rnmapbox/maps",
-  {
-    "RNMapboxMapsDownloadToken": "YOUR_MAPBOX_ACCESS_TOKEN",
-    "RNMapboxMapsVersion": "11.0.0"
-  }
-]
+```env
+# Public access token for the Map component
+EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN=your_public_access_token_here
+
+# Download token for the Mapbox plugin (used during build)
+EXPO_PUBLIC_MAPBOX_DOWNLOAD_TOKEN=your_download_token_here
 ```
 
-Replace `'YOUR_MAPBOX_ACCESS_TOKEN'` with your actual Mapbox access token in both locations.
+Replace the placeholder values with your actual Mapbox tokens from [Mapbox Account](https://account.mapbox.com/).
+
+**Note:** The `EXPO_PUBLIC_` prefix makes these variables available to your app at runtime. Keep your tokens secure and never commit them to version control.
 
 ## Usage
 

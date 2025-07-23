@@ -5,7 +5,9 @@ import { StyleSheet, Text, View } from "react-native";
 
 // You'll need to set up your Mapbox access token
 // For development, you can get a free token from https://account.mapbox.com/
-const MAPBOX_ACCESS_TOKEN = "YOUR_MAPBOX_ACCESS_TOKEN"; // Replace with your actual token
+// Set EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in your environment variables
+const MAPBOX_ACCESS_TOKEN =
+  process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "YOUR_MAPBOX_ACCESS_TOKEN";
 
 export type MapProps = {
   style?: any;
