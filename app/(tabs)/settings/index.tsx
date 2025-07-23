@@ -15,13 +15,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import VStack from "@/components/VStack";
 import { Colors } from "@/constants/Colors";
+import config from "@/constants/config";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useConfig } from "@/hooks/useConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
-  const { environment, appVersion, buildNumber, bundleIdentifier } =
-    useConfig();
+  const { ENVIRONMENT, APP_VERSION, BUILD_NUMBER, BUNDLE_IDENTIFIER } = config;
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const { colorScheme, setColorScheme } = useColorScheme();
 
@@ -138,7 +137,7 @@ export default function SettingsScreen() {
             </ThemedView>
 
             <ThemedView style={styles.item}>
-              <Link href="/contact" asChild>
+              <Link href="/support" asChild>
                 <TouchableOpacity style={{ flex: 1 }}>
                   <HStack gap={10}>
                     <ThemedText type="defaultSemiBold">Support</ThemedText>
@@ -160,22 +159,22 @@ export default function SettingsScreen() {
 
             <ThemedView style={styles.item}>
               <ThemedText type="defaultSemiBold">App Version</ThemedText>
-              <ThemedText>{appVersion}</ThemedText>
+              <ThemedText>{APP_VERSION}</ThemedText>
             </ThemedView>
             <ThemedView style={styles.item}>
               <ThemedText type="defaultSemiBold">Environment</ThemedText>
-              <ThemedText>{environment}</ThemedText>
+              <ThemedText>{ENVIRONMENT}</ThemedText>
             </ThemedView>
-            {buildNumber && (
+            {BUILD_NUMBER && (
               <ThemedView style={styles.item}>
                 <ThemedText type="defaultSemiBold">Build Number</ThemedText>
-                <ThemedText>{buildNumber}</ThemedText>
+                <ThemedText>{BUILD_NUMBER}</ThemedText>
               </ThemedView>
             )}
-            {bundleIdentifier && (
+            {BUNDLE_IDENTIFIER && (
               <ThemedView style={styles.item}>
                 <ThemedText type="defaultSemiBold">Bundle ID</ThemedText>
-                <ThemedText>{bundleIdentifier}</ThemedText>
+                <ThemedText>{BUNDLE_IDENTIFIER}</ThemedText>
               </ThemedView>
             )}
           </ThemedView>

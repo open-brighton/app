@@ -1,3 +1,4 @@
+import { ApolloProvider } from "@apollo/client";
 import {
   DarkTheme,
   DefaultTheme,
@@ -10,6 +11,7 @@ import "react-native-reanimated";
 
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { client } from "@/lib/apollo";
 import React, { useState } from "react";
 import SplashScreen from "../components/SplashScreen";
 
@@ -51,14 +53,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider
-      value={colorScheme === "dark" ? CUSTOM_DARK_THEME : CUSTOM_LIGHT_THEME}
-    >
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider
+        value={colorScheme === "dark" ? CUSTOM_DARK_THEME : CUSTOM_LIGHT_THEME}
+      >
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }

@@ -1,9 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
 import VStack from "@/components/VStack";
+import { SUBMIT_CONTACT } from "@/lib/graphql/mutations";
+import { SubmitContactInput, SubmitContactResponse } from "@/lib/graphql/types";
+import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Button, StyleSheet, TextInput, View } from "react-native";
+import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
 import { z } from "zod";
 
 const schema = z.object({
@@ -15,10 +18,16 @@ const schema = z.object({
 type ContactFormData = z.infer<typeof schema>;
 
 export default function ContactForm() {
+  const [submitContact, { loading }] = useMutation<
+    SubmitContactResponse,
+    { input: SubmitContactInput }
+  >(SUBMIT_CONTACT);
+
   const {
     register,
     setValue,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(schema),
@@ -30,8 +39,30 @@ export default function ContactForm() {
     register("message");
   }, [register]);
 
-  const onSubmit = (data: ContactFormData) => {
-    console.log("Contact form submitted:", data);
+  const onSubmit = async (data: ContactFormData) => {
+    try {
+      await submitContact({
+        variables: {
+          input: {
+            email: data.email,
+            name: data.name,
+            message: data.message,
+          },
+        },
+      });
+
+      Alert.alert("Success", "Your message has been sent successfully!", [
+        {
+          text: "OK",
+          onPress: () => reset(),
+        },
+      ]);
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      Alert.alert("Error", "Failed to send message. Please try again.", [
+        { text: "OK" },
+      ]);
+    }
   };
 
   return (
@@ -88,7 +119,11 @@ export default function ContactForm() {
       </View>
 
       <View>
-        <Button title="Send" onPress={handleSubmit(onSubmit)} />
+        <Button
+          title={loading ? "Sending..." : "Send"}
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading}
+        />
       </View>
     </VStack>
   );
