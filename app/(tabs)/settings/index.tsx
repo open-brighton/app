@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -8,8 +8,11 @@ import {
   View,
 } from "react-native";
 
+import HStack from "@/components/HStack";
+import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import VStack from "@/components/VStack";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -21,14 +24,6 @@ export default function SettingsScreen() {
     useConfig();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const { colorScheme, setColorScheme } = useColorScheme();
-
-  const handleShowSplash = () => {
-    router.push("/splash");
-  };
-
-  const handleGoToContact = () => {
-    router.push("/contact");
-  };
 
   const toggleColorScheme = () => {
     setColorScheme(colorScheme === "dark" ? "light" : "dark");
@@ -92,26 +87,94 @@ export default function SettingsScreen() {
 
           <ThemedView style={styles.section}>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
-              App Info
+              Information
             </ThemedText>
 
             <ThemedView style={styles.item}>
-              <ThemedText type="defaultSemiBold">App Version:</ThemedText>
+              <Link href="/contact" asChild>
+                <TouchableOpacity style={{ flex: 1 }}>
+                  <HStack gap={10}>
+                    <ThemedText type="defaultSemiBold">
+                      Submit Feedback
+                    </ThemedText>
+                    <IconSymbol
+                      size={16}
+                      name="chevron.right"
+                      color={Colors.light.primary}
+                    />
+                  </HStack>
+                </TouchableOpacity>
+              </Link>
+            </ThemedView>
+
+            <ThemedView style={styles.item}>
+              <Link href="/contact" asChild>
+                <TouchableOpacity style={{ flex: 1 }}>
+                  <HStack gap={10}>
+                    <ThemedText type="defaultSemiBold">Contact</ThemedText>
+                    <IconSymbol
+                      size={16}
+                      name="chevron.right"
+                      color={Colors.light.primary}
+                    />
+                  </HStack>
+                </TouchableOpacity>
+              </Link>
+            </ThemedView>
+
+            <ThemedView style={styles.item}>
+              <Link href="/about" asChild>
+                <TouchableOpacity style={{ flex: 1 }}>
+                  <HStack gap={10}>
+                    <ThemedText type="defaultSemiBold">About</ThemedText>
+                    <IconSymbol
+                      size={16}
+                      name="chevron.right"
+                      color={Colors.light.primary}
+                    />
+                  </HStack>
+                </TouchableOpacity>
+              </Link>
+            </ThemedView>
+
+            <ThemedView style={styles.item}>
+              <Link href="/contact" asChild>
+                <TouchableOpacity style={{ flex: 1 }}>
+                  <HStack gap={10}>
+                    <ThemedText type="defaultSemiBold">Support</ThemedText>
+                    <IconSymbol
+                      size={16}
+                      name="chevron.right"
+                      color={Colors.light.primary}
+                    />
+                  </HStack>
+                </TouchableOpacity>
+              </Link>
+            </ThemedView>
+          </ThemedView>
+
+          <ThemedView style={styles.section}>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>
+              App Details
+            </ThemedText>
+
+            <ThemedView style={styles.item}>
+              <ThemedText type="defaultSemiBold">App Version</ThemedText>
               <ThemedText>{appVersion}</ThemedText>
             </ThemedView>
             <ThemedView style={styles.item}>
-              <ThemedText type="defaultSemiBold">Environment:</ThemedText>
+              <ThemedText type="defaultSemiBold">Environment</ThemedText>
               <ThemedText>{environment}</ThemedText>
             </ThemedView>
             {buildNumber && (
               <ThemedView style={styles.item}>
-                <ThemedText type="defaultSemiBold">Build Number:</ThemedText>
+                <ThemedText type="defaultSemiBold">Build Number</ThemedText>
                 <ThemedText>{buildNumber}</ThemedText>
               </ThemedView>
             )}
             {bundleIdentifier && (
               <ThemedView style={styles.item}>
-                <ThemedText type="defaultSemiBold">Bundle ID:</ThemedText>
+                <ThemedText type="defaultSemiBold">Bundle ID</ThemedText>
                 <ThemedText>{bundleIdentifier}</ThemedText>
               </ThemedView>
             )}
@@ -122,24 +185,12 @@ export default function SettingsScreen() {
               Debug
             </ThemedText>
             <VStack>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleShowSplash}
-                activeOpacity={0.7}
-              >
-                <ThemedText type="defaultSemiBold" style={styles.buttonText}>
-                  Show Splash Screen
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleGoToContact}
-                activeOpacity={0.7}
-              >
-                <ThemedText type="defaultSemiBold" style={styles.buttonText}>
-                  Go to Contact Screen
-                </ThemedText>
-              </TouchableOpacity>
+              <Link href="/splash" asChild>
+                <ThemedButton title="Show Splash Screen" />
+              </Link>
+              <Link href="/contact" asChild>
+                <ThemedButton title="Go to Contact Screen" />
+              </Link>
             </VStack>
           </ThemedView>
         </ThemedView>
@@ -172,16 +223,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 8,
     marginBottom: 10,
-  },
-  button: {
-    backgroundColor: Colors.light.tint,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
   },
   settingItem: {
     flexDirection: "row",
