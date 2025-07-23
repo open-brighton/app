@@ -1,0 +1,81 @@
+import { ConfigContext, ExpoConfig } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: "open-brighton",
+  slug: "open-brighton",
+  version: "1.0.0",
+  orientation: "portrait",
+  icon: "./assets/images/icon.png",
+  scheme: "openbrighton",
+  userInterfaceStyle: "automatic",
+  newArchEnabled: true,
+  splash: {
+    image: "./assets/images/splash-icon.png",
+    imageWidth: 200,
+    resizeMode: "contain",
+    backgroundColor: "#0b235a",
+  },
+  ios: {
+    supportsTablet: true,
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
+    bundleIdentifier: "org.openbrighton.app",
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: "./assets/images/adaptive-icon.png",
+      backgroundColor: "#ffffff",
+    },
+    edgeToEdgeEnabled: true,
+    package: "org.openbrighton.app",
+  },
+  web: {
+    bundler: "metro",
+    output: "static",
+    favicon: "./assets/images/favicon.png",
+    backgroundColor: "#0b235a",
+  },
+  plugins: [
+    "expo-router",
+    [
+      "expo-splash-screen",
+      {
+        image: "./assets/images/splash-icon.png",
+        imageWidth: 200,
+        resizeMode: "contain",
+        backgroundColor: "#0b235a",
+      },
+    ],
+    [
+      "expo-dev-client",
+      {
+        launchMode: "most-recent",
+      },
+    ],
+    [
+      "@rnmapbox/maps",
+      {
+        RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOAD_TOKEN,
+        RNMapboxMapsVersion: "11.0.0",
+      },
+    ],
+    [
+      "expo-location",
+      {
+        locationWhenInUsePermission: "Show current location on map.",
+      },
+    ],
+  ],
+  experiments: {
+    typedRoutes: true,
+  },
+  extra: {
+    router: {},
+    eas: {
+      projectId: "3bfca4f2-0862-442e-b394-574160d0a998",
+    },
+  },
+  owner: "jcuffney",
+}); 
