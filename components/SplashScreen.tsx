@@ -1,9 +1,17 @@
 import LottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import { Colors } from "../constants/Colors";
 
-export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
+export default function SplashScreen({
+  onFinish,
+  fadeDuration = 500,
+  shouldFadeOut = false,
+}: {
+  onFinish?: () => void;
+  fadeDuration?: number;
+  shouldFadeOut?: boolean;
+}) {
   const [animationDone, setAnimationDone] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -15,27 +23,36 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
           duration: 500,
           useNativeDriver: true,
         }).start(() => {
-          onFinish();
+          onFinish?.();
         });
-      }, 500); // 0.5s pause after animation
+      }, fadeDuration); // 0.5s pause after animation
     }
-  }, [animationDone]);
+  }, [animationDone, fadeDuration, onFinish]);
 
+  // NOTE: Since the animated view animates opacity but we want the backgroudn to remain the same color, we need to wrap the animated view in a view with the background color.
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <LottieView
-        source={require("../assets/animations/lottie/animations/animation.json")}
-        autoPlay
-        loop={false}
-        onAnimationFinish={() => setAnimationDone(true)}
-        style={styles.lottie}
-      />
-    </Animated.View>
+    <View style={styles.staticView}>
+      <Animated.View
+        style={[styles.animatedView, { opacity: shouldFadeOut ? fadeAnim : 1 }]}
+      >
+        <LottieView
+          source={require("../assets/animations/lottie/animations/animation.json")}
+          autoPlay
+          loop={false}
+          onAnimationFinish={() => setAnimationDone(true)}
+          style={styles.lottie}
+        />
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  staticView: {
+    flex: 1,
+    backgroundColor: Colors.dark.background,
+  },
+  animatedView: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Colors.dark.background,
     justifyContent: "center",
