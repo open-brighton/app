@@ -9,7 +9,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 
-export default function TabTwoScreen() {
+export default function ExploreScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.background }}>
       <ParallaxScrollView

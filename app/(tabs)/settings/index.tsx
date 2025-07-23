@@ -9,11 +9,9 @@ import {
 } from "react-native";
 
 import HStack from "@/components/HStack";
-import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import VStack from "@/components/VStack";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -33,7 +31,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.background }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         <ThemedView>
           <ThemedText type="title" style={styles.title}>
@@ -90,7 +88,7 @@ export default function SettingsScreen() {
             </ThemedText>
 
             <ThemedView style={styles.item}>
-              <Link href="/contact" asChild>
+              <Link href="/feedback" asChild>
                 <TouchableOpacity style={{ flex: 1 }}>
                   <HStack gap={10}>
                     <ThemedText type="defaultSemiBold">
@@ -137,10 +135,10 @@ export default function SettingsScreen() {
             </ThemedView>
 
             <ThemedView style={styles.item}>
-              <Link href="/support" asChild>
+              <Link href="/donate" asChild>
                 <TouchableOpacity style={{ flex: 1 }}>
                   <HStack gap={10}>
-                    <ThemedText type="defaultSemiBold">Support</ThemedText>
+                    <ThemedText type="defaultSemiBold">Donate</ThemedText>
                     <IconSymbol
                       size={16}
                       name="chevron.right"
@@ -177,20 +175,6 @@ export default function SettingsScreen() {
                 <ThemedText>{BUNDLE_IDENTIFIER}</ThemedText>
               </ThemedView>
             )}
-          </ThemedView>
-
-          <ThemedView style={styles.section}>
-            <ThemedText type="subtitle" style={styles.sectionTitle}>
-              Debug
-            </ThemedText>
-            <VStack>
-              <Link href="/splash" asChild>
-                <ThemedButton title="Show Splash Screen" />
-              </Link>
-              <Link href="/contact" asChild>
-                <ThemedButton title="Go to Contact Screen" />
-              </Link>
-            </VStack>
           </ThemedView>
         </ThemedView>
       </ScrollView>
