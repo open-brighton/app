@@ -42,7 +42,12 @@ export default function RootLayout() {
   }
 
   if (showSplash) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+    return (
+      <SplashScreen
+        shouldFadeOut={true}
+        onFinish={() => setShowSplash(false)}
+      />
+    );
   }
 
   return (
