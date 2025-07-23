@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import HStack from "@/components/HStack";
+import NotificationTest from "@/components/NotificationTest";
 import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -20,6 +21,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 export default function SettingsScreen() {
   const { ENVIRONMENT, APP_VERSION, BUILD_NUMBER, BUNDLE_IDENTIFIER } = config;
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [showNotificationTest, setShowNotificationTest] = useState(false);
   const { colorScheme, setColorScheme } = useColorScheme();
 
   const toggleColorScheme = () => {
@@ -28,6 +30,10 @@ export default function SettingsScreen() {
 
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
+  };
+
+  const toggleNotificationTest = () => {
+    setShowNotificationTest(!showNotificationTest);
   };
 
   return (
@@ -80,7 +86,35 @@ export default function SettingsScreen() {
                 thumbColor={notificationsEnabled ? "#f4f3f4" : "#f4f3f4"}
               />
             </View>
+
+            <ThemedView style={styles.item}>
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                onPress={toggleNotificationTest}
+              >
+                <HStack gap={10}>
+                  <ThemedText type="defaultSemiBold">
+                    {showNotificationTest ? "Hide" : "Show"} Notification Test
+                  </ThemedText>
+                  <IconSymbol
+                    size={16}
+                    name="chevron.right"
+                    color={Colors.light.primary}
+                  />
+                </HStack>
+              </TouchableOpacity>
+            </ThemedView>
           </ThemedView>
+
+          {/* Notification Test Section */}
+          {showNotificationTest && (
+            <ThemedView style={styles.section}>
+              <ThemedText type="subtitle" style={styles.sectionTitle}>
+                Notification Test
+              </ThemedText>
+              <NotificationTest />
+            </ThemedView>
+          )}
 
           <ThemedView style={styles.section}>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
