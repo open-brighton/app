@@ -1,16 +1,16 @@
 import { Image } from "expo-image";
 import { Platform, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
+import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.background }}>
+    <ThemedSafeAreaView>
       <ParallaxScrollView
         headerBackgroundColor={{
           light: Colors.light.background,
@@ -102,7 +102,7 @@ export default function HomeScreen() {
           </ThemedText>
         </ThemedView>
       </ParallaxScrollView>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 

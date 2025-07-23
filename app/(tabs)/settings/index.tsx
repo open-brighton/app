@@ -9,13 +9,13 @@ import {
 } from "react-native";
 
 import HStack from "@/components/HStack";
+import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const { ENVIRONMENT, APP_VERSION, BUILD_NUMBER, BUNDLE_IDENTIFIER } = config;
@@ -31,7 +31,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <ThemedSafeAreaView>
       <ScrollView style={styles.container}>
         <ThemedView>
           <ThemedText type="title" style={styles.title}>
@@ -178,7 +178,7 @@ export default function SettingsScreen() {
           </ThemedView>
         </ThemedView>
       </ScrollView>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 
