@@ -5,7 +5,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function AboutScreen() {
+export default function ContactScreen() {
   const { colorScheme } = useColorScheme();
 
   return (
@@ -19,7 +19,7 @@ export default function AboutScreen() {
       }}
     >
       <VStack container>
-        <ThemedText type="title">About</ThemedText>
+        <ThemedText type="title">Feedback</ThemedText>
       </VStack>
     </SafeAreaView>
   );

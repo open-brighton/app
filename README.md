@@ -10,7 +10,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Configure environment variables
+
+   Create a `.env` file in the root directory with:
+
+   ```
+   EXPO_PUBLIC_API_HOST=https://api.openbrighton.com
+   ```
+
+3. Start the app
 
    ```bash
    npx expo start
@@ -24,6 +32,27 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Apollo Client Configuration
+
+This project is configured with Apollo Client for GraphQL communication. The setup includes:
+
+- **Apollo Client Configuration**: Located in `lib/apollo.ts`
+- **GraphQL Endpoint**: Uses `https://api.openbrighton.com/graphql`
+- **Environment Variables**: Configured via `EXPO_PUBLIC_API_HOST` in `.env`
+- **Mutations**: Contact form submission using the `SubmitContact` mutation
+
+### Contact Form
+
+The contact form (`components/ContactForm.tsx`) is configured to submit data to the GraphQL API using the following mutation:
+
+```graphql
+mutation SubmitContact($input: SubmitContactInput!) {
+  submitContact(input: $input)
+}
+```
+
+The form includes validation, loading states, and error handling.
 
 ## Get a fresh project
 

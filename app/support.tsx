@@ -19,7 +19,7 @@ export default function AboutScreen() {
       }}
     >
       <VStack container>
-        <ThemedText type="title">About</ThemedText>
+        <ThemedText type="title">Support</ThemedText>
       </VStack>
     </SafeAreaView>
   );
