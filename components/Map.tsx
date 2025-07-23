@@ -20,7 +20,7 @@ export type MapProps = {
 
 export default function Map({
   style,
-  initialCenter = [-0.1396, 50.8225], // Brighton, UK coordinates
+  initialCenter = [-77.5855, 43.1334], // Brighton, NY coordinates
   initialZoom = 12,
   showUserLocation = true,
   onMapPress,

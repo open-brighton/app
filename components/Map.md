@@ -52,7 +52,7 @@ The Map component is already integrated into the Explore page. It displays a map
 ## Props
 
 - `style`: Custom styles for the container
-- `initialCenter`: Initial map center coordinates `[longitude, latitude]` (default: Brighton, UK)
+- `initialCenter`: Initial map center coordinates `[longitude, latitude]` (default: Brighton, NY)
 - `initialZoom`: Initial zoom level (default: 12)
 - `showUserLocation`: Whether to show user location (default: true)
 - `onMapPress`: Callback for map touch events
