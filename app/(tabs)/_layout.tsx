@@ -46,9 +46,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="debug"
+        name="settings"
         options={{
-          title: "Debug",
+          title: "Settings",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="wrench.fill" color={color} />
           ),

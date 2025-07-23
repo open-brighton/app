@@ -8,19 +8,26 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+export const options = {
+  title: "Debug",
+};
+
 export default function DebugScreen() {
   const appVersion = Constants.expoConfig?.version || "1.0.0";
 
   const handleShowSplash = () => {
-    // Navigate to splash screen for debugging
-    router.push("/splash-debug");
+    router.push("/splash");
+  };
+
+  const handleGoToContact = () => {
+    router.push("/contact");
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.background }}>
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>
-          Debug Menu
+          Settings
         </ThemedText>
 
         <ThemedView style={styles.section}>
@@ -46,6 +53,22 @@ export default function DebugScreen() {
           >
             <ThemedText type="defaultSemiBold" style={styles.buttonText}>
               Show Splash Screen
+            </ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Navigation
+          </ThemedText>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleGoToContact}
+            activeOpacity={0.7}
+          >
+            <ThemedText type="defaultSemiBold" style={styles.buttonText}>
+              Go to Contact Screen
             </ThemedText>
           </TouchableOpacity>
         </ThemedView>
