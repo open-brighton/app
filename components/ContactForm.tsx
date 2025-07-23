@@ -6,8 +6,9 @@ import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
+import { Alert, StyleSheet, TextInput, View } from "react-native";
 import { z } from "zod";
+import { ThemedButton } from "./ThemedButton";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -118,17 +119,14 @@ export default function ContactForm() {
         )}
       </View>
 
-      <View>
-        <Button
-          title={loading ? "Sending..." : "Send"}
-          onPress={handleSubmit(onSubmit)}
-          disabled={loading}
-        />
-      </View>
+      <ThemedButton
+        title={loading ? "Sending..." : "Send"}
+        onPress={handleSubmit(onSubmit)}
+        disabled={loading}
+      />
     </VStack>
   );
 }
-
 const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
