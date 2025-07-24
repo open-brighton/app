@@ -4,7 +4,7 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Stack } from "expo-router";
 
-export const SettingsLayout = () => {
+export const ProfileLayout = () => {
   const { colorScheme } = useColorScheme();
   return (
     <Stack
@@ -20,9 +20,9 @@ export const SettingsLayout = () => {
           colorScheme === "dark" ? Colors.dark.text : Colors.light.text,
       }}
     >
-      <Stack.Screen name="index" options={{ title: "Settings" }} />
+      <Stack.Screen name="index" options={{ title: "Profile" }} />
     </Stack>
   );
 };
 
-export default SettingsLayout;
+export default ProfileLayout;

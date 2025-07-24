@@ -3,7 +3,7 @@ import LottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
-export default function SplashScreen({
+export function SplashScreen({
   onFinish,
   fadeDuration = 500,
   shouldFadeOut = false,

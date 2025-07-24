@@ -9,7 +9,7 @@ import { ThemedView } from "./ThemedView";
  * Test component for demonstrating notification functionality
  * Shows various notification examples and status information
  */
-export default function NotificationTest() {
+export function NotificationTest() {
   const [lastNotificationId, setLastNotificationId] = useState<string | null>(
     null
   );

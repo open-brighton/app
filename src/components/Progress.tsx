@@ -13,7 +13,7 @@ interface ProgressProps {
   style?: any;
 }
 
-export default function Progress({
+export function Progress({
   progress = 0,
   size = 200,
   autoPlay = true,

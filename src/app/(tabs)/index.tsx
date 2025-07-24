@@ -2,13 +2,13 @@ import { Image } from "expo-image";
 import { Platform, StyleSheet } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
+import { ParallaxScrollView } from "@/components/ParallaxScrollView";
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-export default function HomeScreen() {
+export const HomeScreen = () => {
   return (
     <ThemedSafeAreaView>
       <ParallaxScrollView
@@ -104,7 +104,7 @@ export default function HomeScreen() {
       </ParallaxScrollView>
     </ThemedSafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   titleContainer: {
@@ -124,3 +124,5 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 });
+
+export default HomeScreen;

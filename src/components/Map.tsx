@@ -18,7 +18,7 @@ export type MapProps = {
   onMapLoad?: () => void;
 };
 
-export default function Map({
+export function Map({
   style,
   initialCenter = [-77.5855, 43.1334], // Brighton, NY coordinates
   initialZoom = 12,

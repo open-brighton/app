@@ -1,8 +1,8 @@
-import Map from "@/components/Map";
+import { Map } from "@/components/Map";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-export default function ExploreScreen() {
+export const ExploreScreen = () => {
   return (
     <Map
       style={styles.map}
@@ -12,7 +12,7 @@ export default function ExploreScreen() {
       onMapLoad={() => console.log("Map loaded")}
     />
   );
-}
+};
 
 const styles = StyleSheet.create({
   sectionTitle: {
@@ -57,3 +57,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default ExploreScreen;

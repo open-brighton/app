@@ -18,7 +18,7 @@ const schema = z.object({
 
 type ContactFormData = z.infer<typeof schema>;
 
-export default function ContactForm() {
+export function ContactForm() {
   const [submitContact, { loading }] = useMutation<
     SubmitContactResponse,
     { input: SubmitContactInput }

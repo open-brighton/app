@@ -8,7 +8,7 @@ interface VStackProps {
   container?: boolean;
 }
 
-export default function VStack({
+export function VStack({
   children,
   gap = 2,
   style,

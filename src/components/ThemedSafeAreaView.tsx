@@ -8,7 +8,7 @@ interface ThemedSafeAreaViewProps {
   style?: any;
 }
 
-export default function ThemedSafeAreaView({
+export function ThemedSafeAreaView({
   children,
   style,
 }: ThemedSafeAreaViewProps) {

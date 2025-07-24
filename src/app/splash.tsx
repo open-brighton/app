@@ -1,11 +1,13 @@
-import SplashScreen from "@/components/SplashScreen";
+import { SplashScreen as Splash } from "@/components/SplashScreen";
 import { router } from "expo-router";
 import React from "react";
 
-export default function SplashDebugScreen() {
+export const SplashScreen = () => {
   const handleGoBack = () => {
     router.back();
   };
 
-  return <SplashScreen onFinish={handleGoBack} />;
-}
+  return <Splash onFinish={handleGoBack} />;
+};
+
+export default SplashScreen;
