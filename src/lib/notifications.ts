@@ -67,7 +67,8 @@ export class NotificationService {
       console.log('Notification service initialized successfully');
     } catch (error) {
       console.error('Failed to initialize notification service:', error);
-      throw error;
+      // Don't throw error - local notifications should still work
+      console.warn('Continuing with limited notification functionality');
     }
   }
 
@@ -91,10 +92,11 @@ export class NotificationService {
     }
 
     if (finalStatus !== 'granted') {
-      throw new Error('Failed to get push notification permissions');
+      console.warn('Notification permissions not granted - local notifications may not work');
+      return;
     }
 
-    // Get Expo push token
+    // Get Expo push token (this may fail if Firebase isn't configured, but that's okay)
     await this.getExpoPushToken();
   }
 
@@ -107,7 +109,8 @@ export class NotificationService {
                        Constants?.easConfig?.projectId;
       
       if (!projectId) {
-        throw new Error('Project ID not found in app configuration');
+        console.warn('Project ID not found in app configuration - push notifications may not work');
+        return null;
       }
 
       const token = await Notifications.getExpoPushTokenAsync({
@@ -118,6 +121,13 @@ export class NotificationService {
       console.log('Expo push token:', this.expoPushToken);
       return this.expoPushToken;
     } catch (error) {
+      // Handle Firebase initialization error gracefully
+      if (error instanceof Error && error.message.includes('FirebaseApp')) {
+        console.warn('Firebase not configured for push notifications. Local notifications will still work.');
+        console.warn('To enable push notifications, follow: https://docs.expo.dev/push-notifications/fcm-credentials/');
+        return null;
+      }
+      
       console.error('Failed to get Expo push token:', error);
       return null;
     }
