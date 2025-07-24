@@ -9,11 +9,11 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import SplashScreen from "@/components/SplashScreen";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { client } from "@/lib/apollo";
 import React, { useState } from "react";
-import SplashScreen from "../components/SplashScreen";
 
 const CUSTOM_DARK_THEME = {
   ...DarkTheme,
@@ -34,7 +34,7 @@ const CUSTOM_LIGHT_THEME = {
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
   const [showSplash, setShowSplash] = useState(true);
 

@@ -194,14 +194,14 @@ export default function NotificationTest() {
           <ThemedText type="defaultSemiBold">Scheduled:</ThemedText>
           <ThemedText>{scheduledNotifications.length}</ThemedText>
         </ThemedView>
-        {expoPushToken && (
-          <ThemedView style={styles.statusItem}>
-            <ThemedText type="defaultSemiBold">Push Token:</ThemedText>
-            <ThemedText style={styles.tokenText}>
-              {expoPushToken.substring(0, 20)}...
-            </ThemedText>
-          </ThemedView>
-        )}
+        <ThemedView style={styles.statusItem}>
+          <ThemedText type="defaultSemiBold">Push Token:</ThemedText>
+          <ThemedText style={styles.tokenText}>
+            {expoPushToken
+              ? `${expoPushToken.substring(0, 20)}...`
+              : "Not available (Firebase not configured)"}
+          </ThemedText>
+        </ThemedView>
       </ThemedView>
 
       {/* Test Actions */}
