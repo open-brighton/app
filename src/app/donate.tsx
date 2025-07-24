@@ -1,9 +1,9 @@
-import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
-import VStack from "@/components/VStack";
+import { VStack } from "@/components/VStack";
 import React from "react";
 
-export default function DonateScreen() {
+export const DonateScreen = () => {
   return (
     <ThemedSafeAreaView>
       <VStack container>
@@ -11,4 +11,6 @@ export default function DonateScreen() {
       </VStack>
     </ThemedSafeAreaView>
   );
-}
+};
+
+export default DonateScreen;

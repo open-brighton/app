@@ -8,7 +8,7 @@ interface HStackProps {
   style?: ViewStyle;
 }
 
-export default function HStack({
+export function HStack({
   children,
   gap = 0,
   container = false,

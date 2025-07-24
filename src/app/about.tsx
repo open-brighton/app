@@ -1,9 +1,9 @@
-import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
-import VStack from "@/components/VStack";
+import { VStack } from "@/components/VStack";
 import React from "react";
 
-export default function AboutScreen() {
+export const AboutScreen = () => {
   return (
     <ThemedSafeAreaView>
       <VStack container>
@@ -11,4 +11,6 @@ export default function AboutScreen() {
       </VStack>
     </ThemedSafeAreaView>
   );
-}
+};
+
+export default AboutScreen;

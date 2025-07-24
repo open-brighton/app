@@ -9,7 +9,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import SplashScreen from "@/components/SplashScreen";
+import { SplashScreen } from "@/components/SplashScreen";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { client } from "@/lib/apollo";
@@ -31,7 +31,7 @@ const CUSTOM_LIGHT_THEME = {
   },
 };
 
-export default function RootLayout() {
+export const RootLayout = () => {
   const { colorScheme } = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
@@ -65,4 +65,6 @@ export default function RootLayout() {
       </ThemeProvider>
     </ApolloProvider>
   );
-}
+};
+
+export default RootLayout;

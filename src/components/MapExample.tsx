@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import Map from "./Map";
+import { Map } from "./Map";
 
-export default function MapExample() {
+export function MapExample() {
   return (
     <View style={styles.container}>
       {/* Basic Map */}
@@ -20,7 +20,7 @@ export default function MapExample() {
         initialCenter={[-0.1276, 51.5074]} // London, UK
         initialZoom={10}
         showUserLocation={false}
-        onMapPress={(event) => console.log("Map pressed:", event)}
+        onMapPress={(event: unknown) => console.log("Map pressed:", event)}
       />
     </View>
   );

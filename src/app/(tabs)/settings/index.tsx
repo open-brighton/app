@@ -8,9 +8,9 @@ import {
   View,
 } from "react-native";
 
-import HStack from "@/components/HStack";
-import NotificationTest from "@/components/NotificationTest";
-import ThemedSafeAreaView from "@/components/ThemedSafeAreaView";
+import { HStack } from "@/components/HStack";
+import { NotificationTest } from "@/components/NotificationTest";
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
@@ -18,7 +18,7 @@ import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-export default function SettingsScreen() {
+export function SettingsScreen() {
   const { ENVIRONMENT, APP_VERSION, BUILD_NUMBER, BUNDLE_IDENTIFIER } = config;
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showNotificationTest, setShowNotificationTest] = useState(false);
@@ -255,3 +255,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default SettingsScreen;
