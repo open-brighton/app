@@ -38,6 +38,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: "#0b235a",
   },
   plugins: [
+    "expo-font",
+    "expo-web-browser",
     "expo-router",
     [
       "expo-splash-screen",

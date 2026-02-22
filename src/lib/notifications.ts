@@ -294,4 +294,28 @@ export const cleanup = (): void => {
   // This function is no longer part of a class, so it doesn't have direct listeners to remove.
   // It would require a global state or a different approach to manage listeners.
   console.warn('cleanup is no longer part of a class and cannot remove listeners directly.');
+};
+
+/**
+ * Initialize notification permissions, channels, and listeners
+ */
+export const initialize = async (): Promise<void> => {
+  await requestPermissions();
+  await setupNotificationChannels();
+  await setupListeners();
+};
+
+/** Object compatible with useNotifications hook (wraps exported functions) */
+export const notificationService = {
+  initialize,
+  getExpoPushTokenValue,
+  getScheduledNotifications,
+  scheduleNotification,
+  scheduleNotificationForDate,
+  scheduleNotificationWithInterval,
+  cancelNotification,
+  cancelAllNotifications,
+  setBadgeCount,
+  getBadgeCount,
+  cleanup,
 }; 

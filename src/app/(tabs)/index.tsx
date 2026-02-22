@@ -6,7 +6,11 @@ import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+
+const Colors = {
+  light: { background: "#fff" },
+  dark: { background: "#0b235a" },
+};
 
 export const HomeScreen = () => {
   return (

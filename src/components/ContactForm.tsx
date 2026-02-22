@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import VStack from "@/components/VStack";
+import { VStack } from "@/components/VStack";
 import { SUBMIT_CONTACT } from "@/lib/graphql/mutations";
 import { SubmitContactInput, SubmitContactResponse } from "@/lib/graphql/types";
 import { useMutation } from "@apollo/client";

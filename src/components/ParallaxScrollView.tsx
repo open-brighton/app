@@ -4,7 +4,7 @@ import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
-  useScrollViewOffset,
+  useScrollOffset,
 } from "react-native-reanimated";
 
 import { ThemedView } from "@/components/ThemedView";
@@ -26,7 +26,7 @@ export function ParallaxScrollView({
   const { colorScheme } = useColorScheme();
   const scheme = (colorScheme ?? "light") as "light" | "dark";
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
+  const scrollOffset = useScrollOffset(scrollRef);
   const bottom = useBottomTabOverflow();
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {
