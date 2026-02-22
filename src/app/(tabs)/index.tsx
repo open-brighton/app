@@ -1,5 +1,5 @@
-import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+import LottieView from "lottie-react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
@@ -21,10 +21,14 @@ export const HomeScreen = () => {
           dark: Colors.dark.background,
         }}
         headerImage={
-          <Image
-            source={require("@/assets/images/partial-react-logo.png")}
-            style={styles.reactLogo}
-          />
+          <View style={styles.reactLogo}>
+            <LottieView
+              source={require("@/assets/animations/lottie/animations/animation-no-bg.json")}
+              autoPlay
+              loop
+              style={styles.lottie}
+            />
+          </View>
         }
       >
         <ThemedView style={styles.titleContainer}>
@@ -121,11 +125,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  lottie: {
+    width: "100%",
+    height: "100%",
   },
 });
 

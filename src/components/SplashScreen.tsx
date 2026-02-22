@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import LottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
@@ -12,8 +13,11 @@ export function SplashScreen({
   fadeDuration?: number;
   shouldFadeOut?: boolean;
 }) {
+  const { colorScheme } = useColorScheme();
   const [animationDone, setAnimationDone] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const backgroundColor =
+    colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
 
   useEffect(() => {
     if (animationDone) {
@@ -31,12 +35,15 @@ export function SplashScreen({
 
   // NOTE: Since the animated view animates opacity but we want the backgroudn to remain the same color, we need to wrap the animated view in a view with the background color.
   return (
-    <View style={styles.staticView}>
+    <View style={[styles.staticView, { backgroundColor }]}>
       <Animated.View
-        style={[styles.animatedView, { opacity: shouldFadeOut ? fadeAnim : 1 }]}
+        style={[
+          styles.animatedView,
+          { opacity: shouldFadeOut ? fadeAnim : 1, backgroundColor },
+        ]}
       >
         <LottieView
-          source={require("@/assets/animations/lottie/animations/animation.json")}
+          source={require("@/assets/animations/lottie/animations/animation-no-bg.json")}
           autoPlay
           loop={false}
           onAnimationFinish={() => setAnimationDone(true)}
@@ -50,11 +57,9 @@ export function SplashScreen({
 const styles = StyleSheet.create({
   staticView: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
   },
   animatedView: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.dark.background,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,

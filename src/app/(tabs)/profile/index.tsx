@@ -1,5 +1,6 @@
+import { Link } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
@@ -22,6 +23,25 @@ export function ProfileScreen() {
 
   return (
     <ThemedSafeAreaView>
+      <View style={styles.headerRow}>
+        <View style={styles.headerSpacer} />
+        <Link href="/profile/settings" asChild>
+          <TouchableOpacity
+            style={styles.gearButton}
+            accessibilityLabel="Open settings"
+          >
+            <IconSymbol
+              name="gearshape.fill"
+              size={24}
+              color={
+                colorScheme === "dark"
+                  ? Colors.dark.text
+                  : Colors.light.text
+              }
+            />
+          </TouchableOpacity>
+        </Link>
+      </View>
       <ScrollView style={styles.container}>
         <ThemedView>
           <ThemedText type="title" style={styles.title}>
@@ -81,6 +101,20 @@ export function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  headerSpacer: {
+    flex: 1,
+  },
+  gearButton: {
+    padding: 8,
+  },
   container: {
     flex: 1,
     padding: 20,

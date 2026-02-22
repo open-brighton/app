@@ -23,6 +23,8 @@ const MAPPING = {
   "chevron.right": "chevron-right",
   "wrench.fill": "build",
   "person.fill": "person",
+  "gearshape.fill": "settings",
+  "line.3.horizontal": "menu",
 } as IconMapping;
 
 /**

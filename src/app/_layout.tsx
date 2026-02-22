@@ -1,19 +1,26 @@
 import { ApolloProvider } from "@apollo/client";
+import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
+  useNavigation,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Drawer } from "expo-router/drawer";
+import { useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
+import { Text, TouchableOpacity } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
+import { DrawerContent } from "@/components/DrawerContent";
 import { SplashScreen } from "@/components/SplashScreen";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { ColorSchemeProvider, useColorScheme } from "@/contexts/ColorSchemeContext";
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { client } from "@/lib/apollo";
-import React, { useState } from "react";
 
 const CUSTOM_DARK_THEME = {
   ...DarkTheme,
@@ -31,8 +38,71 @@ const CUSTOM_LIGHT_THEME = {
   },
 };
 
-export const RootLayout = () => {
+function DrawerHeaderLeft() {
+  const navigation = useNavigation<DrawerNavigationProp<Record<string, unknown>>>();
   const { colorScheme } = useColorScheme();
+  const color = colorScheme === "dark" ? Colors.dark.text : Colors.light.text;
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.openDrawer()}
+      style={{ marginLeft: 16 }}
+      accessibilityRole="button"
+      accessibilityLabel="Open menu"
+    >
+      <IconSymbol name="line.3.horizontal" size={24} color={color} />
+    </TouchableOpacity>
+  );
+}
+
+function DrawerHeaderTitle() {
+  const segments = useSegments();
+  const { colorScheme } = useColorScheme();
+  const color = colorScheme === "dark" ? Colors.dark.text : Colors.light.text;
+  const title =
+    segments.includes("settings") ? "Settings"
+    : segments.includes("profile") ? "Profile"
+    : "Home";
+  return <Text style={{ fontSize: 18, fontWeight: "600", color }}>{title}</Text>;
+}
+
+function ThemedRootContent() {
+  const { colorScheme } = useColorScheme();
+  return (
+    <ThemeProvider
+      value={colorScheme === "dark" ? CUSTOM_DARK_THEME : CUSTOM_LIGHT_THEME}
+    >
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Drawer
+          drawerContent={(props) => <DrawerContent {...props} />}
+          screenOptions={{
+            headerShown: true,
+            headerLeft: () => <DrawerHeaderLeft />,
+            headerStyle: {
+              backgroundColor:
+                colorScheme === "dark"
+                  ? Colors.dark.background
+                  : Colors.light.background,
+            },
+            headerTintColor:
+              colorScheme === "dark" ? Colors.dark.text : Colors.light.text,
+          }}
+        >
+          <Drawer.Screen
+            name="(tabs)"
+            options={{
+              headerShown: true,
+              headerTitle: () => <DrawerHeaderTitle />,
+            }}
+          />
+          <Drawer.Screen name="+not-found" options={{ headerShown: true }} />
+        </Drawer>
+      </GestureHandlerRootView>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+}
+
+export const RootLayout = () => {
   const [loaded] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -43,26 +113,18 @@ export const RootLayout = () => {
     return null;
   }
 
-  if (showSplash) {
-    return (
-      <SplashScreen
-        shouldFadeOut={true}
-        onFinish={() => setShowSplash(false)}
-      />
-    );
-  }
-
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider
-        value={colorScheme === "dark" ? CUSTOM_DARK_THEME : CUSTOM_LIGHT_THEME}
-      >
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <ColorSchemeProvider>
+        {showSplash ? (
+          <SplashScreen
+            shouldFadeOut={true}
+            onFinish={() => setShowSplash(false)}
+          />
+        ) : (
+          <ThemedRootContent />
+        )}
+      </ColorSchemeProvider>
     </ApolloProvider>
   );
 };

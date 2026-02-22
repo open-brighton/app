@@ -25,8 +25,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./src/assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff",
+      foregroundImage: "./src/assets/images/icon.png",
+      backgroundImage: "./src/assets/images/icon.png",
+      backgroundColor: "#0b235a",
     },
     edgeToEdgeEnabled: true,
     package: "org.openbrighton.app",

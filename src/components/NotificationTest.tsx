@@ -38,7 +38,7 @@ export function NotificationTest() {
       const notificationId = await scheduleNotification({
         title: "Test Notification",
         body: "This is a test notification sent immediately!",
-        data: { screen: "explore", type: "test" },
+        data: { screen: "index", type: "test" },
       });
       setLastNotificationId(notificationId);
       Alert.alert("Success", "Notification scheduled successfully!");
@@ -80,7 +80,7 @@ export function NotificationTest() {
         {
           title: "Scheduled Notification",
           body: "This notification was scheduled for tomorrow at 10 AM!",
-          data: { screen: "explore", type: "scheduled" },
+          data: { screen: "index", type: "scheduled" },
         },
         tomorrow
       );

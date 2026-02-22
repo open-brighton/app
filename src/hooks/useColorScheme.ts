@@ -1,9 +1,5 @@
-import { Appearance, ColorSchemeName, useColorScheme as useRNColorScheme } from 'react-native';
-
-export const useColorScheme = () => {
-  const colorScheme = useRNColorScheme();
-  const setColorScheme = (scheme: ColorSchemeName) => {
-    Appearance.setColorScheme(scheme);
-  };
-  return { colorScheme, setColorScheme };
-};
+/**
+ * Re-export from context so the whole app shares one color scheme state
+ * and toggling (e.g. in Settings) updates the theme immediately everywhere.
+ */
+export { useColorScheme } from "@/contexts/ColorSchemeContext";

@@ -63,7 +63,7 @@ export function Progress({
     >
       <LottieView
         ref={lottieRef}
-        source={require("@/assets/animations/lottie/animations/animation.json")}
+        source={require("@/assets/animations/lottie/animations/animation-no-bg.json")}
         autoPlay={autoPlay}
         loop={loop}
         onAnimationFinish={handleAnimationFinish}
