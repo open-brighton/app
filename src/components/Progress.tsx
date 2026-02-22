@@ -1,7 +1,7 @@
+import { LottieAnimation } from "@/components/LottieAnimation";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import LottieView from "lottie-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 
 interface ProgressProps {
@@ -22,29 +22,6 @@ export function Progress({
   style,
 }: ProgressProps) {
   const { colorScheme } = useColorScheme();
-  const lottieRef = useRef<LottieView>(null);
-  const [isPlaying, setIsPlaying] = useState(autoPlay);
-
-  // Calculate the progress frame based on the progress value (0-1)
-  const totalFrames = 181; // From the Lottie animation JSON
-  const progressFrame = Math.floor(progress * totalFrames);
-
-  useEffect(() => {
-    if (lottieRef.current) {
-      if (progress > 0) {
-        // Seek to the specific frame based on progress
-        lottieRef.current.play(progressFrame, progressFrame);
-      } else {
-        // Reset to beginning
-        lottieRef.current.reset();
-      }
-    }
-  }, [progress, progressFrame]);
-
-  const handleAnimationFinish = () => {
-    setIsPlaying(false);
-    onAnimationFinish?.();
-  };
 
   return (
     <View
@@ -61,12 +38,11 @@ export function Progress({
         style,
       ]}
     >
-      <LottieView
-        ref={lottieRef}
-        source={require("@/assets/animations/lottie/animations/animation-no-bg.json")}
+      <LottieAnimation
+        progress={progress}
         autoPlay={autoPlay}
         loop={loop}
-        onAnimationFinish={handleAnimationFinish}
+        onAnimationFinish={onAnimationFinish}
         style={[styles.lottie, { width: size, height: size }]}
         speed={1}
       />

@@ -1,16 +1,18 @@
+import { ContactForm } from "@/forms/ContactForm";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { VStack } from "@/components/VStack";
 import React from "react";
 
-export const FeedbackScreen = () => {
+export const ContactScreen = () => {
   return (
     <ThemedSafeAreaView>
       <VStack container>
-        <ThemedText type="title">Feedback</ThemedText>
+        <ThemedText type="title">Contact</ThemedText>
+        <ContactForm />
       </VStack>
     </ThemedSafeAreaView>
   );
 };
 
-export default FeedbackScreen;
+export default ContactScreen;

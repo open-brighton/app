@@ -22,6 +22,7 @@
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "@rnmapbox/maps": "^10.1.39",
+    "@stripe/stripe-react-native": "0.50.3",
     "ajv": "^8.17.1",
     "expo": "^54.0.33",
     "expo-blur": "~15.0.8",

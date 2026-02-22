@@ -6,6 +6,7 @@ import { Stack } from "expo-router";
 
 export const ProfileLayout = () => {
   const { colorScheme } = useColorScheme();
+
   return (
     <Stack
       screenOptions={{
@@ -21,15 +22,6 @@ export const ProfileLayout = () => {
       }}
     >
       <Stack.Screen name="index" options={{ title: "Profile" }} />
-      <Stack.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          headerShown: true,
-          headerBackTitle: "Profile",
-          headerBackVisible: true,
-        }}
-      />
     </Stack>
   );
 };

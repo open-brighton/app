@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import React from "react";
 
 import { HapticTab } from "@/components/HapticTab";
@@ -8,16 +8,22 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 
 export const TabLayout = () => {
   const { colorScheme } = useColorScheme();
+  const segments = useSegments() as string[];
+  const isNestedInProfile =
+    segments.includes("profile") &&
+    (segments.includes("settings") || segments.includes("debug"));
 
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor:
-            colorScheme === "dark"
-              ? Colors.dark.background
-              : Colors.light.background,
-        },
+        tabBarStyle: isNestedInProfile
+          ? { display: "none" }
+          : {
+              backgroundColor:
+                colorScheme === "dark"
+                  ? Colors.dark.background
+                  : Colors.light.background,
+            },
         tabBarActiveTintColor:
           colorScheme === "dark" ? Colors.dark.text : Colors.light.text,
         headerShown: false,
@@ -30,6 +36,15 @@ export const TabLayout = () => {
           title: "Home",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: "Chat",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="message.fill" color={color} />
           ),
         }}
       />

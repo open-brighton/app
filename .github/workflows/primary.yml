@@ -23,6 +23,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for native changes
+        id: native_changed
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            native:
+              - package.json
+              - package-lock.json
+              - app.config.ts
+              - app.json
+              - eas.json
+              - 'ios/**'
+              - 'android/**'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,11 +60,15 @@ jobs:
       #     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build for Android
-        if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' || (github.event.inputs.platform == '' && github.event_name == 'push')
+        if: (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' || (github.event.inputs.platform == '' && github.event_name == 'push')) && (github.event_name == 'workflow_dispatch' || contains(steps.native_changed.outputs.changes, 'native'))
         run: |
           eas build --platform android --profile development --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Skip build (no native changes)
+        if: github.event_name != 'workflow_dispatch' && !contains(steps.native_changed.outputs.changes, 'native')
+        run: echo "Skipped - no native dependency or config changes; EAS build not run to preserve free build quota."
 
       - name: Upload build artifacts
         if: always()

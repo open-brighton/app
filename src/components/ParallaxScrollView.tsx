@@ -16,26 +16,31 @@ const HEADER_HEIGHT = 250;
 interface Props extends PropsWithChildren<{}> {
   headerImage: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
+  /** Extra bottom padding (e.g. for a fixed footer). */
+  extraPaddingBottom?: number;
 }
 
 export function ParallaxScrollView({
   children,
   headerImage,
   headerBackgroundColor,
+  extraPaddingBottom = 0,
 }: Props) {
   const { colorScheme } = useColorScheme();
   const scheme = (colorScheme ?? "light") as "light" | "dark";
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
   const bottom = useBottomTabOverflow();
+  const totalBottom = bottom + extraPaddingBottom;
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
+          // Parallax: header moves slower at first, then fully off by HEADER_HEIGHT
           translateY: interpolate(
             scrollOffset.value,
-            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
-            [-HEADER_HEIGHT / 2, 0, HEADER_HEIGHT * 0.75]
+            [-HEADER_HEIGHT, 0, HEADER_HEIGHT / 2, HEADER_HEIGHT],
+            [-HEADER_HEIGHT / 2, 0, HEADER_HEIGHT / 4, 0]
           ),
         },
         {
@@ -54,8 +59,8 @@ export function ParallaxScrollView({
       <Animated.ScrollView
         ref={scrollRef}
         scrollEventThrottle={16}
-        scrollIndicatorInsets={{ bottom }}
-        contentContainerStyle={{ paddingBottom: bottom }}
+        scrollIndicatorInsets={{ bottom: totalBottom }}
+        contentContainerStyle={{ paddingBottom: totalBottom }}
       >
         <Animated.View
           style={[

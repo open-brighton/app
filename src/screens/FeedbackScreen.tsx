@@ -1,16 +1,16 @@
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
-import { ThemedText } from "@/components/ThemedText";
 import { VStack } from "@/components/VStack";
+import { FeedbackForm } from "@/forms/FeedbackForm";
 import React from "react";
 
-export const DonateScreen = () => {
+export const FeedbackScreen = () => {
   return (
     <ThemedSafeAreaView>
       <VStack container>
-        <ThemedText type="title">Donate</ThemedText>
+        <FeedbackForm />
       </VStack>
     </ThemedSafeAreaView>
   );
 };
 
-export default DonateScreen;
+export default FeedbackScreen;

@@ -39,6 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: "#0b235a",
   },
   plugins: [
+    "./plugins/withAndroidLaunchModeSingleTask.js",
     "expo-font",
     "expo-web-browser",
     "expo-router",
@@ -73,6 +74,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
         "expo-notifications",
     ],
+    [
+      "@stripe/stripe-react-native",
+      {
+        merchantIdentifier: "merchant.org.openbrighton.app",
+        enableGooglePay: false,
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
@@ -82,6 +90,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     eas: {
       projectId: "3bfca4f2-0862-442e-b394-574160d0a998",
     },
+    // Mapbox public token – set EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in EAS Secrets or .env
+    MAPBOX_ACCESS_TOKEN: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN,
   },
   owner: "jcuffney",
 }); 

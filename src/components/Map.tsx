@@ -1,13 +1,10 @@
+import { config } from "@/constants/config";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Mapbox from "@rnmapbox/maps";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-// You'll need to set up your Mapbox access token
-// For development, you can get a free token from https://account.mapbox.com/
-// Set EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in your environment variables
-const MAPBOX_ACCESS_TOKEN =
-  process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "YOUR_MAPBOX_ACCESS_TOKEN";
+const MAPBOX_ACCESS_TOKEN = config.MAPBOX_ACCESS_TOKEN || "";
 
 export type MapProps = {
   style?: any;
@@ -40,10 +37,7 @@ export function Map({
     onMapLoad?.();
   };
 
-  if (
-    !MAPBOX_ACCESS_TOKEN ||
-    MAPBOX_ACCESS_TOKEN === "YOUR_MAPBOX_ACCESS_TOKEN"
-  ) {
+  if (!MAPBOX_ACCESS_TOKEN?.trim()) {
     return (
       <View style={[styles.container, { backgroundColor }, style]}>
         <Text style={[styles.errorText, { color: textColor }]}>

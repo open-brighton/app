@@ -1,6 +1,6 @@
+import { LottieAnimation } from "@/components/LottieAnimation";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import LottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
@@ -42,8 +42,7 @@ export function SplashScreen({
           { opacity: shouldFadeOut ? fadeAnim : 1, backgroundColor },
         ]}
       >
-        <LottieView
-          source={require("@/assets/animations/lottie/animations/animation-no-bg.json")}
+        <LottieAnimation
           autoPlay
           loop={false}
           onAnimationFinish={() => setAnimationDone(true)}

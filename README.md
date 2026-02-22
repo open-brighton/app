@@ -16,7 +16,22 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    ```
    EXPO_PUBLIC_API_HOST=https://api.openbrighton.com
+   EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_public_token
    ```
+
+   For **EAS Build** (cloud builds), `.env` is not pushed. Add the same variables as EAS Secrets so they are available during the build:
+
+   ```bash
+   eas secret:create --name EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN --value "pk.your_token" --scope project
+   ```
+
+   Optional (needed for the Mapbox native SDK download during prebuild):
+
+   ```bash
+   eas secret:create --name MAPBOX_DOWNLOAD_TOKEN --value "your_download_token" --scope project
+   ```
+
+   You can also set secrets in the [Expo dashboard](https://expo.dev) under your project → Secrets.
 
 3. Start the app
 
@@ -44,7 +59,7 @@ This project is configured with Apollo Client for GraphQL communication. The set
 
 ### Contact Form
 
-The contact form (`components/ContactForm.tsx`) is configured to submit data to the GraphQL API using the following mutation:
+The contact form (`forms/ContactForm.tsx`) is configured to submit data to the GraphQL API using the following mutation:
 
 ```graphql
 mutation SubmitContact($input: SubmitContactInput!) {
