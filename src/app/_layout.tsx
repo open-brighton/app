@@ -159,7 +159,11 @@ function ThemedRootContent() {
           />
           <Drawer.Screen
             name="explore"
-            options={{ headerShown: false }}
+            options={{
+              headerShown: true,
+              headerTitle: () => <DrawerHeaderTitle />,
+              headerRight: () => <DrawerHeaderRight />,
+            }}
           />
           <Drawer.Screen
             name="(info)"

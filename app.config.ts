@@ -2,14 +2,17 @@ import { ConfigContext, ExpoConfig } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "open-brighton",
+  name: "Open Brighton",
   slug: "open-brighton",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
-  scheme: "openbrighton",
+  scheme: "open-brighton",
   userInterfaceStyle: "automatic",
-  newArchEnabled: true,
+  updates: {
+    url: "https://u.expo.dev/3bfca4f2-0862-442e-b394-574160d0a998",
+    enableBsdiffPatchSupport: true,
+  },
   splash: {
     image: "./src/assets/images/splash-icon.png",
     imageWidth: 200,
@@ -17,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: "#0b235a",
   },
   ios: {
-    supportsTablet: true,
+    supportsTablet: true, 
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
@@ -29,7 +32,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundImage: "./src/assets/images/icon.png",
       backgroundColor: "#0b235a",
     },
-    edgeToEdgeEnabled: true,
     package: "org.openbrighton.app",
   },
   web: {
@@ -41,6 +43,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     "./plugins/withAndroidLaunchModeSingleTask.js",
     "expo-font",
+    "expo-image",
     "expo-web-browser",
     "expo-router",
     [
@@ -61,7 +64,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "@rnmapbox/maps",
       {
-        RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOAD_TOKEN,
+        RNMAPBOX_MAPS_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
         RNMapboxMapsVersion: "11.16.2",
       },
     ],

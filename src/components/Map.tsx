@@ -2,7 +2,7 @@ import { config } from "@/constants/config";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Mapbox from "@rnmapbox/maps";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
 const MAPBOX_ACCESS_TOKEN = config.MAPBOX_ACCESS_TOKEN || "";
 
@@ -13,6 +13,9 @@ export type MapProps = {
   showUserLocation?: boolean;
   onMapPress?: (event: any) => void;
   onMapLoad?: () => void;
+  /** Explicit dimensions for the map (e.g. from parent). Helps MapView layout on Android. */
+  width?: number;
+  height?: number;
 };
 
 export function Map({
@@ -22,19 +25,38 @@ export function Map({
   showUserLocation = true,
   onMapPress,
   onMapLoad,
+  width: widthProp,
+  height: heightProp,
 }: MapProps) {
   const [isMapReady, setIsMapReady] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const windowSize = useWindowDimensions();
+  const width = widthProp ?? windowSize.width;
+  const height = heightProp ?? windowSize.height;
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
 
   useEffect(() => {
-    // Initialize Mapbox
     Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
   }, []);
 
   const handleMapLoad = () => {
     setIsMapReady(true);
+    setLoadError(null);
     onMapLoad?.();
+  };
+
+  // If onMapIdle/onDidFinishLoadingMap never fire (e.g. Android), stop showing loading after a timeout
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMapReady((ready) => (ready ? ready : true));
+    }, 12000);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const handleLoadError = () => {
+    setLoadError("Map failed to load");
+    setIsMapReady(true); // hide loading overlay
   };
 
   if (!MAPBOX_ACCESS_TOKEN?.trim()) {
@@ -48,11 +70,22 @@ export function Map({
   }
 
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[
+        styles.container,
+        { width, height },
+        Platform.OS === "android" && styles.containerAndroid,
+        style,
+      ]}
+      collapsable={false}
+    >
       <Mapbox.MapView
-        style={styles.map}
+        style={[styles.map, { width, height }]}
+        collapsable={false}
         styleURL={Mapbox.StyleURL.Street}
         onMapIdle={handleMapLoad}
+        onDidFinishLoadingMap={handleMapLoad}
+        onMapLoadingError={handleLoadError}
       >
         <Mapbox.Camera
           zoomLevel={initialZoom}
@@ -73,6 +106,13 @@ export function Map({
           </Text>
         </View>
       )}
+      {isMapReady && loadError && (
+        <View style={styles.errorBanner}>
+          <Text style={[styles.errorBannerText, { color: textColor }]}>
+            {loadError}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -80,8 +120,14 @@ export function Map({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     borderRadius: 8,
     overflow: "hidden",
+  },
+  containerAndroid: {
+    elevation: 2,
+    overflow: "visible",
   },
   map: {
     flex: 1,
@@ -104,5 +150,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     padding: 20,
+  },
+  errorBanner: {
+    position: "absolute",
+    bottom: 16,
+    left: 16,
+    right: 16,
+    padding: 12,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    borderRadius: 8,
+  },
+  errorBannerText: {
+    fontSize: 14,
+    textAlign: "center",
   },
 });
