@@ -18,12 +18,19 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import { DrawerContent } from "@/components/DrawerContent";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SplashScreen } from "@/components/SplashScreen";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ColorSchemeProvider, useColorScheme } from "@/contexts/ColorSchemeContext";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { client } from "@/lib/apollo";
+import Mapbox from "@rnmapbox/maps";
+
+// Set token before any MapView mounts so tile requests are authenticated
+if (config.MAPBOX_ACCESS_TOKEN?.trim()) {
+  Mapbox.setAccessToken(config.MAPBOX_ACCESS_TOKEN);
+}
 
 const CUSTOM_DARK_THEME = {
   ...DarkTheme,
@@ -205,14 +212,16 @@ export const RootLayout = () => {
         urlScheme={Linking.createURL("")}
       >
         <ColorSchemeProvider>
-          {showSplash ? (
-            <SplashScreen
-              shouldFadeOut={true}
-              onFinish={() => setShowSplash(false)}
-            />
-          ) : (
-            <ThemedRootContent />
-          )}
+          <ErrorBoundary>
+            {showSplash ? (
+              <SplashScreen
+                shouldFadeOut={true}
+                onFinish={() => setShowSplash(false)}
+              />
+            ) : (
+              <ThemedRootContent />
+            )}
+          </ErrorBoundary>
         </ColorSchemeProvider>
       </StripeProvider>
     </ApolloProvider>

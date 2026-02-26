@@ -1,12 +1,35 @@
-import config from '@/constants/config';
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
-
+import config from "@/constants/config";
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  createHttpLink,
+} from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
   uri: `${config.API_HOST}/graphql`,
 });
 
+const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) => {
+  if (__DEV__) {
+    if (graphQLErrors?.length) {
+      graphQLErrors.forEach(({ message, locations, path }) => {
+        console.error(
+          "[GraphQL error]",
+          message,
+          locations != null ? { locations, path } : ""
+        );
+      });
+    }
+    if (networkError) {
+      console.error("[Network error]", networkError);
+    }
+  }
+  return forward(operation);
+});
+
 export const client = new ApolloClient({
-  link: httpLink,
+  link: ApolloLink.from([errorLink, httpLink]),
   cache: new InMemoryCache(),
 }); 

@@ -36,7 +36,7 @@ Notifications.setNotificationHandler({
  */
 export const requestPermissions = async (): Promise<void> => {
   if (!Device.isDevice) {
-    console.warn('Push notifications require a physical device');
+    if (__DEV__) console.warn('Push notifications require a physical device');
     return;
   }
 
@@ -51,7 +51,7 @@ export const requestPermissions = async (): Promise<void> => {
   }
 
   if (finalStatus !== 'granted') {
-    console.warn('Notification permissions not granted - local notifications may not work');
+    if (__DEV__) console.warn('Notification permissions not granted - local notifications may not work');
     return;
   }
 
@@ -68,7 +68,7 @@ export const getExpoPushToken = async (): Promise<string | null> => {
                      Constants?.easConfig?.projectId;
     
     if (!projectId) {
-      console.warn('Project ID not found in app configuration - push notifications may not work');
+      if (__DEV__) console.warn('Project ID not found in app configuration - push notifications may not work');
       return null;
     }
 
@@ -76,13 +76,17 @@ export const getExpoPushToken = async (): Promise<string | null> => {
       projectId,
     });
 
-    console.log('Expo push token:', token.data);
+    if (__DEV__) {
+      console.log('Expo push token:', token.data);
+    }
     return token.data;
   } catch (error) {
     // Handle Firebase initialization error gracefully
     if (error instanceof Error && error.message.includes('FirebaseApp')) {
-      console.warn('Firebase not configured for push notifications. Local notifications will still work.');
-      console.warn('To enable push notifications, follow: https://docs.expo.dev/push-notifications/fcm-credentials/');
+      if (__DEV__) {
+        console.warn('Firebase not configured for push notifications. Local notifications will still work.');
+        console.warn('To enable push notifications, follow: https://docs.expo.dev/push-notifications/fcm-credentials/');
+      }
       return null;
     }
     
@@ -121,8 +125,7 @@ export const setupListeners = async (): Promise<void> => {
   // Listen for notifications received while app is running
   Notifications.addNotificationReceivedListener(
     (notification) => {
-      console.log('Notification received:', notification);
-      // Handle notification received event
+      if (__DEV__) console.log('Notification received:', notification);
       handleNotificationReceived(notification);
     }
   );
@@ -130,8 +133,7 @@ export const setupListeners = async (): Promise<void> => {
   // Listen for user interaction with notifications
   Notifications.addNotificationResponseReceivedListener(
     (response) => {
-      console.log('Notification response:', response);
-      // Handle notification response event
+      if (__DEV__) console.log('Notification response:', response);
       handleNotificationResponse(response);
     }
   );
@@ -141,11 +143,9 @@ export const setupListeners = async (): Promise<void> => {
  * Handle notification received event
  */
 export const handleNotificationReceived = (notification: Notifications.Notification): void => {
-  // You can add custom logic here, such as:
-  // - Updating app state
-  // - Showing in-app alerts
-  // - Logging analytics
-  console.log('Handling received notification:', notification.request.content);
+  if (__DEV__) {
+    console.log('Handling received notification:', notification.request.content);
+  }
 };
 
 /**
@@ -154,10 +154,8 @@ export const handleNotificationReceived = (notification: Notifications.Notificat
 export const handleNotificationResponse = (response: Notifications.NotificationResponse): void => {
   const { data } = response.notification.request.content;
   
-  // Handle deep linking or navigation based on notification data
   if (data?.screen) {
-    // Navigate to specific screen
-    console.log('Navigating to screen:', data.screen);
+    if (__DEV__) console.log('Navigating to screen:', data.screen);
   }
 };
 
@@ -180,7 +178,7 @@ export const scheduleNotification = async (
       trigger: trigger || null, // null means show immediately
     });
 
-    console.log('Notification scheduled with ID:', notificationId);
+    if (__DEV__) console.log('Notification scheduled with ID:', notificationId);
     return notificationId;
   } catch (error) {
     console.error('Failed to schedule notification:', error);
@@ -220,7 +218,7 @@ export const scheduleNotificationWithInterval = async (
 export const cancelNotification = async (notificationId: string): Promise<void> => {
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
-    console.log('Notification cancelled:', notificationId);
+    if (__DEV__) console.log('Notification cancelled:', notificationId);
   } catch (error) {
     console.error('Failed to cancel notification:', error);
     throw error;
@@ -233,7 +231,7 @@ export const cancelNotification = async (notificationId: string): Promise<void> 
 export const cancelAllNotifications = async (): Promise<void> => {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    console.log('All notifications cancelled');
+    if (__DEV__) console.log('All notifications cancelled');
   } catch (error) {
     console.error('Failed to cancel all notifications:', error);
     throw error;
@@ -256,10 +254,9 @@ export const getScheduledNotifications = async (): Promise<Notifications.Notific
  * Get the current Expo push token
  */
 export const getExpoPushTokenValue = (): string | null => {
-  // This function is no longer part of a class, so it doesn't have a direct instance variable.
-  // It would require a global state or a different approach to manage the token.
-  // For now, returning null as a placeholder.
-  console.warn('getExpoPushTokenValue is no longer part of a class and cannot return a token directly.');
+  if (__DEV__) {
+    console.warn('getExpoPushTokenValue is no longer part of a class and cannot return a token directly.');
+  }
   return null;
 };
 
@@ -291,9 +288,9 @@ export const getBadgeCount = async (): Promise<number> => {
  * Clean up listeners when the service is no longer needed
  */
 export const cleanup = (): void => {
-  // This function is no longer part of a class, so it doesn't have direct listeners to remove.
-  // It would require a global state or a different approach to manage listeners.
-  console.warn('cleanup is no longer part of a class and cannot remove listeners directly.');
+  if (__DEV__) {
+    console.warn('cleanup is no longer part of a class and cannot remove listeners directly.');
+  }
 };
 
 /**

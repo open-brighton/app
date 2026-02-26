@@ -69,6 +69,12 @@ mutation SubmitContact($input: SubmitContactInput!) {
 
 The form includes validation, loading states, and error handling.
 
+## Security and data
+
+- **User authentication**: The app does not implement user login or session auth. All screens are reachable without signing in.
+- **GraphQL API**: Requests to the backend are unauthenticated (no `Authorization` header). This is intentional for the current use case (e.g. public feedback, contact, and donate flows). The backend is responsible for rate limiting and validating input.
+- **Sensitive data**: Payment is handled by Stripe (Payment Sheet). The app sends donation details to your GraphQL API, which returns a Stripe `clientSecret`; the app never persists payment credentials. API keys and publishable keys are loaded from environment variables (see `.env.sample`); do not commit secrets.
+
 ## Get a fresh project
 
 When you're ready, run:

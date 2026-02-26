@@ -9,14 +9,14 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-// Placeholder data as requested
+// Placeholder data for profile UI (replace with real user data when auth is implemented)
 const profileData = {
   firstName: "John",
   lastName: "Doe",
-  email: "josephcuffney@gmail.com",
-  phone: "585 867-5309",
-  addressStreet: "75 Buckland Ave",
-  addressCityStateZip: "Brighton, NY 14618",
+  email: "user@example.com",
+  phone: "(555) 000-0000",
+  addressStreet: "123 Example St",
+  addressCityStateZip: "City, ST 00000",
 };
 
 export function ProfileScreen() {

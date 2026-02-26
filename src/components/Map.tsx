@@ -2,7 +2,13 @@ import { config } from "@/constants/config";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Mapbox from "@rnmapbox/maps";
 import React, { useEffect, useState } from "react";
-import { Platform, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
 const MAPBOX_ACCESS_TOKEN = config.MAPBOX_ACCESS_TOKEN || "";
 
@@ -36,10 +42,6 @@ export function Map({
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
 
-  useEffect(() => {
-    Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
-  }, []);
-
   const handleMapLoad = () => {
     setIsMapReady(true);
     setLoadError(null);
@@ -55,6 +57,9 @@ export function Map({
   }, []);
 
   const handleLoadError = () => {
+    if (__DEV__) {
+      console.warn("Mapbox map loading error – check token and style URL");
+    }
     setLoadError("Map failed to load");
     setIsMapReady(true); // hide loading overlay
   };

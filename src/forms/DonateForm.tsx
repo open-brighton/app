@@ -2,6 +2,7 @@ import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { VStack } from "@/components/VStack";
 import { TextField } from "@/fields/TextField";
+import { getMutationErrorMessage } from "@/lib/errors";
 import {
   CREATE_DONATE_PAYMENT_INTENT,
   CREATE_DONATE_SUBSCRIPTION,
@@ -167,10 +168,11 @@ export function DonateForm() {
       }
     } catch (error) {
       console.error("Donate form error:", error);
-      Alert.alert(
-        "Error",
+      const message = getMutationErrorMessage(
+        error,
         "Something went wrong. Please check your connection and try again."
       );
+      Alert.alert("Error", message);
     }
   };
 

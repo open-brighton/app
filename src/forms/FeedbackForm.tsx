@@ -1,6 +1,7 @@
 import { ThemedButton } from "@/components/ThemedButton";
 import { VStack } from "@/components/VStack";
 import { TextField } from "@/fields/TextField";
+import { getMutationErrorMessage } from "@/lib/errors";
 import { SUBMIT_FEEDBACK } from "@/lib/graphql/mutations";
 import { SubmitFeedbackInput, SubmitFeedbackResponse } from "@/lib/graphql/types";
 import { useMutation } from "@apollo/client";
@@ -60,9 +61,11 @@ export function FeedbackForm() {
       ]);
     } catch (error) {
       console.error("Error submitting feedback form:", error);
-      Alert.alert("Error", "Failed to send feedback. Please try again.", [
-        { text: "OK" },
-      ]);
+      const message = getMutationErrorMessage(
+        error,
+        "Failed to send feedback. Please try again."
+      );
+      Alert.alert("Error", message, [{ text: "OK" }]);
     }
   };
 
