@@ -3,8 +3,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { CHAT } from "@/lib/graphql/mutations";
+import type { ChatInput, ChatResponse } from "@/lib/graphql/types";
 import type { Message } from "@/types/chat";
 import { CHAT_EMPTY_PROMPT } from "@/types/chat";
+import { useMutation } from "@apollo/client";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
@@ -79,6 +82,8 @@ export function ChatScreen() {
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
+  const [sendChat] = useMutation<ChatResponse, { input: ChatInput }>(CHAT);
+
   const insets = useSafeAreaInsets();
   const background = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -117,17 +122,34 @@ export function ChatScreen() {
     setInputText("");
     setIsAssistantTyping(true);
 
-    // Placeholder: simulate assistant reply for UX demo. Replace with real LLM call later.
-    const placeholderAssistant: Message = {
-      id: `assistant-${Date.now()}`,
-      role: "assistant",
-      content: "Reply placeholder — hook up your LLM here.",
-      timestamp: new Date().toISOString(),
-    };
-    setTimeout(() => {
-      setMessages((prev) => [placeholderAssistant, ...prev]);
-      setIsAssistantTyping(false);
-    }, 800);
+    const messagesForApi = [...messages, userMessage]
+      .slice()
+      .reverse()
+      .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+
+    sendChat({ variables: { input: { messages: messagesForApi } } })
+      .then(({ data }) => {
+        const reply = data?.chat ?? "";
+        const assistantMessage: Message = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: reply,
+          timestamp: new Date().toISOString(),
+        };
+        setMessages((prev) => [assistantMessage, ...prev]);
+      })
+      .catch(() => {
+        const errorMessage: Message = {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          content: "Something went wrong. Please try again.",
+          timestamp: new Date().toISOString(),
+        };
+        setMessages((prev) => [errorMessage, ...prev]);
+      })
+      .finally(() => {
+        setIsAssistantTyping(false);
+      });
   }, [inputText, isAssistantTyping]);
 
   const canSend = inputText.trim().length > 0 && !isAssistantTyping;

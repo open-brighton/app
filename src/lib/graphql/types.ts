@@ -45,4 +45,17 @@ export interface CreateDonateSubscriptionResponse {
   createDonateSubscription: {
     clientSecret: string;
   };
-} 
+}
+
+export interface ChatMessageInput {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatInput {
+  messages: ChatMessageInput[];
+}
+
+export interface ChatResponse {
+  chat: string;
+}

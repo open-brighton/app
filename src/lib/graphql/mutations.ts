@@ -26,4 +26,10 @@ export const CREATE_DONATE_SUBSCRIPTION = gql`
       clientSecret
     }
   }
+`;
+
+export const CHAT = gql`
+  mutation Chat($input: ChatInput!) {
+    chat(input: $input)
+  }
 `; 
