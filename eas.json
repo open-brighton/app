@@ -8,12 +8,18 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": { "resourceClass": "m-medium" },
-      "android": { "buildType": "apk" }
+      "android": { "buildType": "apk" },
+      "env": {
+        "APP_ENV": "development"
+      }
     },
     "preview": {
       "distribution": "internal",
       "ios": { "resourceClass": "m-medium" },
-      "android": { "buildType": "apk" }
+      "android": { "buildType": "apk" },
+      "env": {
+        "APP_ENV": "preview"
+      }
     },
     "production": {
       "distribution": "store",

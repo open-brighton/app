@@ -1,13 +1,24 @@
 import { ConfigContext, ExpoConfig } from 'expo/config';
 
+const APP_ENV = process.env.APP_ENV ?? 'development';
+const IS_DEV = APP_ENV === 'development';
+const IS_PREVIEW = APP_ENV === 'preview';
+const IS_PROD = APP_ENV === 'production';
+
+const appName = IS_PROD ? 'Open Brighton' : IS_PREVIEW ? 'Open Brighton Preview' : 'Open Brighton Dev';
+const bundleId = IS_PROD ? 'org.openbrighton.app' : IS_PREVIEW ? 'org.openbrighton.app.preview' : 'org.openbrighton.app.dev';
+const scheme = IS_PROD ? 'open-brighton' : IS_PREVIEW ? 'open-brighton-preview' : 'open-brighton-dev';
+const icon = IS_DEV ? './src/assets/images/icon-dev.png' : './src/assets/images/icon.png';
+const androidBackgroundColor = IS_DEV ? '#f5f0e0' : '#0b235a';
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "Open Brighton",
+  name: appName,
   slug: "open-brighton",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./src/assets/images/icon.png",
-  scheme: "open-brighton",
+  icon,
+  scheme,
   userInterfaceStyle: "automatic",
   updates: {
     url: "https://u.expo.dev/3bfca4f2-0862-442e-b394-574160d0a998",
@@ -24,15 +35,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
-    bundleIdentifier: "org.openbrighton.app",
+    bundleIdentifier: bundleId,
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./src/assets/images/icon.png",
-      backgroundImage: "./src/assets/images/icon.png",
-      backgroundColor: "#0b235a",
+      foregroundImage: icon,
+      backgroundImage: icon,
+      backgroundColor: androidBackgroundColor,
     },
-    package: "org.openbrighton.app",
+    package: bundleId,
   },
   web: {
     bundler: "metro",
@@ -80,7 +91,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "@stripe/stripe-react-native",
       {
-        merchantIdentifier: "merchant.org.openbrighton.app",
+        merchantIdentifier: `merchant.${bundleId}`,
         enableGooglePay: false,
       },
     ],
