@@ -61,7 +61,7 @@ export function MapLayerTray({
 
   useEffect(() => {
     translateY.value = withSpring(isOpen ? 0 : trayHeight, SPRING);
-  }, [isOpen, trayHeight]);
+  }, [isOpen, trayHeight, translateY]);
 
   const panGesture = Gesture.Pan()
     .activeOffsetY(8)

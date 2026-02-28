@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Linking, ScrollView, StyleSheet, View } from "react-native";
 
 import { Card } from "@/components/Card";
 import { LottieAnimation } from "@/components/LottieAnimation";
@@ -25,7 +25,7 @@ export const AboutScreen = () => {
           <ThemedText type="subtitle" style={styles.heading}>What is Open Brighton?</ThemedText>
           <ThemedText style={styles.body}>
             Open Brighton is a free app that makes it easier to explore
-            Brighton's parks, events, and services — all in one place. It's
+            Brighton&apos;s parks, events, and services — all in one place. It&apos;s
             built for residents and visitors who want a simple, mobile-friendly
             way to connect with town life.
           </ThemedText>
@@ -33,7 +33,7 @@ export const AboutScreen = () => {
           <ThemedText type="subtitle" style={styles.heading}>Independent & community-driven</ThemedText>
           <ThemedText style={styles.body}>
             This app is not affiliated with the Town of Brighton or any local
-            government. It's a labor of love — built and maintained by a
+            government. It&apos;s a labor of love — built and maintained by a
             resident, on volunteer time, with no pay. Donations help cover App
             Store fees and hosting costs currently paid out of pocket.
           </ThemedText>
@@ -44,6 +44,9 @@ export const AboutScreen = () => {
             suggest improvements, and build on it. The goal is a small, durable
             tool that supplements — not replaces — official town resources.
           </ThemedText>
+
+          <ThemedText type="subtitle" style={styles.heading}>Roadmap</ThemedText>
+          <ThemedText style={styles.body}>{"• Automate content retrieval from various sources.\n• Launch on App Store / Play Store\n• Community Outreach"}</ThemedText>
 
           <ThemedText type="subtitle" style={styles.heading}>Get involved</ThemedText>
 
@@ -62,9 +65,11 @@ export const AboutScreen = () => {
             <ThemedText>Reach out with anything else on your mind.</ThemedText>
           </Card>
 
-          <ThemedText style={styles.footer}>
-            Thanks for using Open Brighton — we'd love to hear from you.
-          </ThemedText>
+          <Card onPress={() => Linking.openURL("https://github.com/open-brighton")}>
+            <ThemedText type="defaultSemiBold">Are you a software developer?</ThemedText>
+            <ThemedText>Want to help maintain or write software for your community? Feel free to contribute at github.com/open-brighton</ThemedText>
+          </Card>
+
         </VStack>
       </ScrollView>
     </ThemedSafeAreaView>
@@ -90,12 +95,7 @@ const styles = StyleSheet.create({
   heading: {
     textAlign: "center",
   },
-  footer: {
-    marginTop: 8,
-    fontStyle: "italic",
-    opacity: 0.9,
-    textAlign: "center",
-  },
+
 });
 
 export default AboutScreen;

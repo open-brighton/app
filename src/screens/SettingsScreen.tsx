@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet, Switch, View } from "react-native";
 
 import { SettingsRow } from "@/components/SettingsRow";
@@ -9,16 +9,18 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { NOTIFICATION_TYPES, useNotificationPreferences } from "@/hooks/useNotificationPreferences";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export function SettingsScreen() {
   const { ENVIRONMENT, APP_VERSION, BUILD_NUMBER, BUNDLE_IDENTIFIER } = config;
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const { enabled: notificationsEnabled, setEnabled: setNotificationsEnabled, typePrefs, setTypeEnabled } = useNotificationPreferences();
   const { colorScheme, setColorScheme } = useColorScheme();
   const router = useRouter();
 
   const switchTrack = useThemeColor({}, "switchTrack");
   const itemBg = useThemeColor({}, "itemBackground");
+
 
   const toggleColorScheme = () => {
     setColorScheme(colorScheme === "dark" ? "light" : "dark");
@@ -62,6 +64,24 @@ export function SettingsScreen() {
                 thumbColor="#f4f3f4"
               />
             </ThemedView>
+            {notificationsEnabled && (
+              <ThemedView style={styles.subSection}>
+                {NOTIFICATION_TYPES.map((type) => (
+                  <ThemedView key={type.key} style={[styles.subSettingItem, { backgroundColor: itemBg }]}>
+                    <View style={styles.settingInfo}>
+                      <ThemedText type="defaultSemiBold">{type.label}</ThemedText>
+                      <ThemedText>{type.description}</ThemedText>
+                    </View>
+                    <Switch
+                      value={typePrefs[type.key]}
+                      onValueChange={(value) => setTypeEnabled(type.key, value)}
+                      trackColor={{ false: switchTrack, true: Colors.light.tint }}
+                      thumbColor="#f4f3f4"
+                    />
+                  </ThemedView>
+                ))}
+              </ThemedView>
+            )}
           </ThemedView>
 
           <ThemedView style={styles.section}>
@@ -124,6 +144,22 @@ const styles = StyleSheet.create({
   },
   settingInfo: {
     flex: 1,
+  },
+  subSection: {
+    marginTop: -4,
+    marginBottom: 6,
+    paddingLeft: 12,
+    borderLeftWidth: 2,
+    borderLeftColor: Colors.light.tint,
+  },
+  subSettingItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginBottom: 6,
   },
 });
 

@@ -5,7 +5,6 @@ import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 import { ErrorState } from "@/components/ErrorState";
 import { EVENT_CARD_FRAGMENT, EventCard, EventCard_event } from "@/components/EventCard";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
-import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { EventCategory } from "@/lib/graphql/types";
 
@@ -29,7 +28,7 @@ const GET_EVENTS = gql`
 type GetEventsData = {
   events: {
     pageInfo: { hasNextPage: boolean; endCursor: string | null };
-    edges: Array<{ node: EventCard_event }>;
+    edges: { node: EventCard_event }[];
   };
 };
 

@@ -14,7 +14,8 @@
     "init:hard": "rm -rf package-lock.json node_modules && npm install",
     "build:ios": "eas build --platform ios --profile production",
     "build:android": "eas build --platform android --profile production",
-    "build:all": "eas build --platform all --profile production"
+    "build:all": "eas build --platform all --profile production",
+    "verify": "npm run lint && npm run test:coverage"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
@@ -73,9 +74,6 @@
     "jest": "^29.7.0",
     "jest-expo": "~55.0.0",
     "typescript": "~5.9.2"
-  },
-  "overrides": {
-    "minimatch": ">=10.2.1"
   },
   "private": true
 }

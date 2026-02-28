@@ -34,7 +34,7 @@ const GET_FEED = gql`
 type GetFeedData = {
   feed: {
     pageInfo: { hasNextPage: boolean; endCursor: string | null };
-    edges: Array<{ node: FeedCard_feedItem }>;
+    edges: { node: FeedCard_feedItem }[];
   };
 };
 
@@ -77,7 +77,7 @@ export function HomeParallaxContent({
       <ThemedView style={nuxStyles.stepContainer}>
         <ThemedText type="subtitle">Explore the map</ThemedText>
         <ThemedText>
-          Tap the Explore tab to see what's happening around Brighton.
+          Tap the Explore tab to see what&apos;s happening around Brighton.
         </ThemedText>
       </ThemedView>
       <ThemedView style={nuxStyles.stepContainer}>

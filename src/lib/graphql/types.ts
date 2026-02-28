@@ -74,3 +74,13 @@ export interface ChatInput {
 export interface ChatResponse {
   chat: string;
 }
+
+export interface ValidateAddressResult {
+  valid: boolean;
+  normalizedAddress: string | null;
+  message: string | null;
+}
+
+export interface ValidateAddressResponse {
+  validateAddress: ValidateAddressResult;
+}

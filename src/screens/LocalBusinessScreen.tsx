@@ -9,7 +9,6 @@ import {
 } from "@/components/BusinessCard";
 import { ErrorState } from "@/components/ErrorState";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
-import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { BusinessCategory } from "@/lib/graphql/types";
 
@@ -33,7 +32,7 @@ const GET_BUSINESSES = gql`
 type GetBusinessesData = {
   businesses: {
     pageInfo: { hasNextPage: boolean; endCursor: string | null };
-    edges: Array<{ node: BusinessCard_business }>;
+    edges: { node: BusinessCard_business }[];
   };
 };
 

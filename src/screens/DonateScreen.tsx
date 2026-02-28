@@ -15,7 +15,7 @@ export const DonateScreen = () => {
       >
         <VStack container gap={20}>
           <ThemedText type="default">
-            This is a project built by and for the community — and it has real costs. If you're getting value out of it and you'd like to see it keep going, please help keep the lights on.
+            This is a project built by and for the community — and it has real costs. If you&apos;re getting value out of it and you&apos;d like to see it keep going, please help keep the lights on.
           </ThemedText>
           <DonateForm />
         </VStack>

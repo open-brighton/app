@@ -42,7 +42,7 @@ export function NotificationTest() {
       });
       setLastNotificationId(notificationId);
       Alert.alert("Success", "Notification scheduled successfully!");
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to schedule notification");
     }
   };
@@ -62,7 +62,7 @@ export function NotificationTest() {
       );
       setLastNotificationId(notificationId);
       Alert.alert("Success", "Delayed notification scheduled for 5 seconds!");
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to schedule delayed notification");
     }
   };
@@ -86,7 +86,7 @@ export function NotificationTest() {
       );
       setLastNotificationId(notificationId);
       Alert.alert("Success", "Notification scheduled for tomorrow at 10 AM!");
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to schedule notification for tomorrow");
     }
   };
@@ -104,7 +104,7 @@ export function NotificationTest() {
       await cancelNotification(lastNotificationId);
       setLastNotificationId(null);
       Alert.alert("Success", "Last notification cancelled!");
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to cancel notification");
     }
   };
@@ -117,7 +117,7 @@ export function NotificationTest() {
       await cancelAllNotifications();
       setLastNotificationId(null);
       Alert.alert("Success", "All notifications cancelled!");
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to cancel all notifications");
     }
   };
@@ -130,7 +130,7 @@ export function NotificationTest() {
       const newCount = badgeCount + 1;
       await updateBadgeCount(newCount);
       Alert.alert("Success", `Badge count updated to ${newCount}`);
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to update badge count");
     }
   };
@@ -142,7 +142,7 @@ export function NotificationTest() {
     try {
       await refreshScheduledNotifications();
       Alert.alert("Success", "Notifications list refreshed!");
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Failed to refresh notifications");
     }
   };

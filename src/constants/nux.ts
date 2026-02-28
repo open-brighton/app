@@ -9,6 +9,11 @@ export type NuxStep = {
   body: string;
   /** When set, this step uses a custom screen component instead of title/body. */
   screen?: string;
+  /**
+   * When true, the GuideScreen footer "Next" button is hidden.
+   * The custom screen component is responsible for calling onNext() to advance.
+   */
+  hideFooter?: boolean;
 };
 
 /** Props passed to a step screen component when step.screen is set. */
@@ -31,6 +36,20 @@ export type NuxDefinition = {
 };
 
 export const NUX_REGISTRY: NuxDefinition[] = [
+  {
+    slug: "user-onboarding",
+    title: "Welcome to OpenBrighton",
+    defaultRedirect: "/(tabs)",
+    steps: [
+      {
+        id: "user-onboarding",
+        title: "User Onboarding",
+        body: "",
+        screen: "user-onboarding",
+        hideFooter: true,
+      },
+    ],
+  },
   {
     slug: "welcome",
     title: "Welcome Guide",

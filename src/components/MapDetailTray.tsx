@@ -50,7 +50,7 @@ export function MapDetailTray({ isOpen, feature, onClose }: MapDetailTrayProps) 
 
   useEffect(() => {
     translateY.value = withSpring(isOpen ? 0 : trayHeight, SPRING);
-  }, [isOpen, trayHeight]);
+  }, [isOpen, trayHeight, translateY]);
 
   const panGesture = Gesture.Pan()
     .activeOffsetY(8)

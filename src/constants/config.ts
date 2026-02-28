@@ -1,6 +1,6 @@
 import Constants from "expo-constants";
 
-export const config = {
+const appConfig = {
   ENVIRONMENT: process.env.EXPO_PUBLIC_NODE_ENV || "development",
   API_HOST: process.env.EXPO_PUBLIC_API_HOST || "https://api.openbrighton.com",
   MAPBOX_ACCESS_TOKEN:
@@ -12,4 +12,4 @@ export const config = {
   STRIPE_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "",
 };
 
-export default config;
+export default appConfig;

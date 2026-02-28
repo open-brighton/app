@@ -83,7 +83,9 @@ export default function GuideScreen() {
             nux={nux}
           />
         </View>
-        <View style={styles.footerFixed}>{nextButton}</View>
+        {!step.hideFooter && (
+          <View style={styles.footerFixed}>{nextButton}</View>
+        )}
       </ThemedSafeAreaView>
     );
   }

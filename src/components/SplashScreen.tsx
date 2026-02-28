@@ -31,7 +31,7 @@ export function SplashScreen({
         });
       }, fadeDuration); // 0.5s pause after animation
     }
-  }, [animationDone, fadeDuration, onFinish]);
+  }, [animationDone, fadeDuration, onFinish, fadeAnim]);
 
   // NOTE: Since the animated view animates opacity but we want the backgroudn to remain the same color, we need to wrap the animated view in a view with the background color.
   return (

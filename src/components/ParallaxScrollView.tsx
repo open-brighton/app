@@ -13,7 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 
 const HEADER_HEIGHT = 250;
 
-interface Props extends PropsWithChildren<{}> {
+interface Props extends PropsWithChildren {
   headerImage: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
   /** Extra bottom padding (e.g. for a fixed footer). */
