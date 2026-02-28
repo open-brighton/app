@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
 import { Card } from "@/components/Card";
 import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
@@ -14,6 +14,7 @@ export const BUSINESS_CARD_FRAGMENT = gql`
     name
     category
     address
+    imageUrl
   }
 `;
 
@@ -23,14 +24,19 @@ export type BusinessCard_business = {
   name: string;
   category: string;
   address: string;
+  imageUrl?: string | null;
 };
 
 type Props = { business: BusinessCard_business };
 
 export function BusinessCard({ business }: Props) {
+  const imageArea = business.imageUrl
+    ? <Image source={{ uri: business.imageUrl }} style={styles.image} />
+    : <CardImagePlaceholder icon="storefront" />;
+
   return (
     <Card
-      imageArea={<CardImagePlaceholder icon="storefront" />}
+      imageArea={imageArea}
       onPress={() => router.push(`/local-business/${business.slug}`)}
     >
       <ThemedText type="subtitle" style={styles.name}>
@@ -43,6 +49,10 @@ export function BusinessCard({ business }: Props) {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: "100%",
+    height: 120,
+  },
   name: {
     marginBottom: 2,
   },

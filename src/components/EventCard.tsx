@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
 import { Card } from "@/components/Card";
 import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
@@ -13,6 +13,7 @@ export const EVENT_CARD_FRAGMENT = gql`
     date
     location
     category
+    imageUrl
   }
 `;
 
@@ -22,13 +23,18 @@ export type EventCard_event = {
   date: string;
   location: string;
   category: string;
+  imageUrl?: string | null;
 };
 
 type Props = { event: EventCard_event };
 
 export function EventCard({ event }: Props) {
+  const imageArea = event.imageUrl
+    ? <Image source={{ uri: event.imageUrl }} style={styles.image} />
+    : <CardImagePlaceholder icon="event" />;
+
   return (
-    <Card imageArea={<CardImagePlaceholder icon="event" />} onPress={() => {}}>
+    <Card imageArea={imageArea} onPress={() => {}}>
       <ThemedText type="subtitle" style={styles.title}>
         {event.title}
       </ThemedText>
@@ -39,6 +45,10 @@ export function EventCard({ event }: Props) {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: "100%",
+    height: 120,
+  },
   title: {
     marginBottom: 2,
   },

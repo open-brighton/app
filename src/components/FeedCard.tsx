@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
 import { Card } from "@/components/Card";
 import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
@@ -13,6 +13,7 @@ export const FEED_CARD_FRAGMENT = gql`
     description
     category
     date
+    imageUrl
   }
 `;
 
@@ -22,13 +23,18 @@ export type FeedCard_feedItem = {
   description: string;
   category: string;
   date: string;
+  imageUrl?: string | null;
 };
 
 type Props = { feedItem: FeedCard_feedItem };
 
 export function FeedCard({ feedItem }: Props) {
+  const imageArea = feedItem.imageUrl
+    ? <Image source={{ uri: feedItem.imageUrl }} style={styles.image} />
+    : <CardImagePlaceholder icon="image" />;
+
   return (
-    <Card imageArea={<CardImagePlaceholder icon="image" />} onPress={() => {}}>
+    <Card imageArea={imageArea} onPress={() => {}}>
       <ThemedText type="subtitle" style={styles.title}>
         {feedItem.title}
       </ThemedText>
@@ -38,6 +44,10 @@ export function FeedCard({ feedItem }: Props) {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: "100%",
+    height: 120,
+  },
   title: {
     marginBottom: 2,
   },
