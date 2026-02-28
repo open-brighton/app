@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 
+import { ErrorState } from "@/components/ErrorState";
 import { FEED_CARD_FRAGMENT, FeedCard, FeedCard_feedItem } from "@/components/FeedCard";
 import { HelloWave } from "@/components/HelloWave";
 import { LottieAnimation } from "@/components/LottieAnimation";
@@ -110,9 +111,10 @@ export const HomeScreen = () => {
 
   if (error) {
     return (
-      <ThemedSafeAreaView style={styles.centered}>
-        <ThemedText>Failed to load feed.</ThemedText>
-      </ThemedSafeAreaView>
+      <ErrorState
+        message="Failed to load feed."
+        onRetry={() => refetch()}
+      />
     );
   }
 

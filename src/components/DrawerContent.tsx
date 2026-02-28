@@ -130,30 +130,6 @@ export function DrawerContent(props: DrawerContentComponentProps) {
           </TouchableOpacity>
 
           <Text style={[styles.sectionHeader, { color: colors.icon }]}>
-            Profile
-          </Text>
-
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => handleNavigate("/(tabs)/profile")}
-            accessibilityRole="button"
-            accessibilityLabel="Profile"
-          >
-            <IconSymbol name="person.fill" size={24} color={iconColor} />
-            <Text style={[styles.label, { color: textColor }]}>Profile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => handleNavigate("/settings")}
-            accessibilityRole="button"
-            accessibilityLabel="Settings"
-          >
-            <IconSymbol name="gearshape.fill" size={24} color={iconColor} />
-            <Text style={[styles.label, { color: textColor }]}>Settings</Text>
-          </TouchableOpacity>
-
-          <Text style={[styles.sectionHeader, { color: colors.icon }]}>
             Information
           </Text>
 

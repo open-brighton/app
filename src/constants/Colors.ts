@@ -10,6 +10,7 @@ export const Colors = {
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
     primary: '#c7aa3c',
+    error: '#e05252',
     // Chat bubbles
     chatUserBubble: tintColorLight,
     chatAssistantBubble: '#e8f4f8',
@@ -27,6 +28,7 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
     primary: '#c7aa3c',
+    error: '#e05252',
     // Chat bubbles
     chatUserBubble: '#c7aa3c',
     chatAssistantBubble: '#1a3878',

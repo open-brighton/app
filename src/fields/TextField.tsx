@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import {
   StyleSheet,
@@ -19,6 +20,8 @@ export function TextField({
   inputStyle,
   ...textInputProps
 }: TextFieldProps) {
+  const errorColor = useThemeColor({}, "error");
+
   return (
     <View>
       <ThemedText type="default" style={styles.label}>
@@ -29,7 +32,7 @@ export function TextField({
         {...textInputProps}
       />
       {error ? (
-        <ThemedText type="default" style={styles.error}>
+        <ThemedText type="default" style={[styles.error, { color: errorColor }]}>
           {error}
         </ThemedText>
       ) : null}
@@ -49,7 +52,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   error: {
-    color: "red",
     marginTop: 2,
   },
 });

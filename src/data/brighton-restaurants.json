@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": {
+        "name": "Max's Chophouse",
+        "address": "1456 Monroe Ave, Rochester, NY 14618",
+        "phone": "(585) 271-3510"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.5730759, 43.1343736]
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Switch } from "react-native";
+import { ScrollView, StyleSheet, Switch, View } from "react-native";
 
 import { SettingsRow } from "@/components/SettingsRow";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
@@ -33,10 +33,10 @@ export function SettingsScreen() {
               App Settings
             </ThemedText>
             <ThemedView style={[styles.settingItem, { backgroundColor: itemBg }]}>
-              <ThemedView style={styles.settingInfo}>
+              <View style={styles.settingInfo}>
                 <ThemedText type="defaultSemiBold">Dark Mode</ThemedText>
                 <ThemedText>{colorScheme === "dark" ? "On" : "Off"}</ThemedText>
-              </ThemedView>
+              </View>
               <Switch
                 value={colorScheme === "dark"}
                 onValueChange={toggleColorScheme}
@@ -51,10 +51,10 @@ export function SettingsScreen() {
               Notifications
             </ThemedText>
             <ThemedView style={[styles.settingItem, { backgroundColor: itemBg }]}>
-              <ThemedView style={styles.settingInfo}>
+              <View style={styles.settingInfo}>
                 <ThemedText type="defaultSemiBold">Push Notifications</ThemedText>
                 <ThemedText>{notificationsEnabled ? "On" : "Off"}</ThemedText>
-              </ThemedView>
+              </View>
               <Switch
                 value={notificationsEnabled}
                 onValueChange={setNotificationsEnabled}

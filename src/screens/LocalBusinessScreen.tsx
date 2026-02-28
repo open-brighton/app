@@ -7,6 +7,7 @@ import {
   BusinessCard,
   BusinessCard_business,
 } from "@/components/BusinessCard";
+import { ErrorState } from "@/components/ErrorState";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -62,9 +63,10 @@ export const LocalBusinessScreen = () => {
 
   if (error) {
     return (
-      <ThemedSafeAreaView style={styles.centered}>
-        <ThemedText>Failed to load businesses.</ThemedText>
-      </ThemedSafeAreaView>
+      <ErrorState
+        message="Failed to load businesses."
+        onRetry={() => refetch()}
+      />
     );
   }
 

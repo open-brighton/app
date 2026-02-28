@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 
+import { ErrorState } from "@/components/ErrorState";
 import { EVENT_CARD_FRAGMENT, EventCard, EventCard_event } from "@/components/EventCard";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
@@ -58,9 +59,10 @@ export const EventsScreen = () => {
 
   if (error) {
     return (
-      <ThemedSafeAreaView style={styles.centered}>
-        <ThemedText>Failed to load events.</ThemedText>
-      </ThemedSafeAreaView>
+      <ErrorState
+        message="Failed to load events."
+        onRetry={() => refetch()}
+      />
     );
   }
 
