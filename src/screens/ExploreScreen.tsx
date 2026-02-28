@@ -1,5 +1,6 @@
 import { Map } from "@/components/Map";
 import { MapLayer, MapLayerTray } from "@/components/MapLayerTray";
+import { useExploreContext } from "@/contexts/ExploreContext";
 import React, { useState } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 
@@ -13,19 +14,13 @@ const DEFAULT_LAYERS: MapLayer[] = [
     icon: "map-outline",
     enabled: true,
   },
-  {
-    id: "userLocation",
-    label: "My Location",
-    description: "Show where you are",
-    icon: "navigate-outline",
-    enabled: true,
-  },
 ];
 
 export const ExploreScreen = () => {
   const { width, height } = useWindowDimensions();
   const mapHeight = height - HEADER_OFFSET;
   const [layers, setLayers] = useState<MapLayer[]>(DEFAULT_LAYERS);
+  const { isLayerTrayOpen, closeLayerTray } = useExploreContext();
 
   const handleLayerToggle = (id: string, enabled: boolean) => {
     setLayers((prev) => prev.map((l) => (l.id === id ? { ...l, enabled } : l)));
@@ -40,12 +35,16 @@ export const ExploreScreen = () => {
       collapsable={false}
     >
       <Map
-        showUserLocation={getLayer("userLocation")}
         showBoundary={getLayer("boundary")}
         width={width}
         height={mapHeight}
       />
-      <MapLayerTray layers={layers} onLayerToggle={handleLayerToggle} />
+      <MapLayerTray
+        isOpen={isLayerTrayOpen}
+        layers={layers}
+        onLayerToggle={handleLayerToggle}
+        onClose={closeLayerTray}
+      />
     </View>
   );
 };

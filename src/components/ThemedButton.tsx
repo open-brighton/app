@@ -1,11 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
+  ViewStyle,
 } from "react-native";
 
 interface ThemedButtonProps extends TouchableOpacityProps {
@@ -21,19 +22,37 @@ export function ThemedButton({
   style,
   ...props
 }: ThemedButtonProps) {
-  const { colorScheme } = useColorScheme();
+  const tint = useThemeColor({}, "tint");
+  const secondaryBg = useThemeColor({}, "secondaryButton");
+  const defaultTextColor = useThemeColor({}, "text");
 
-  const buttonStyle = [styles.base, styles[size], styles[variant], style];
+  let variantStyle: ViewStyle;
+  let textColor: string;
 
-  const textStyle = [
-    styles.text,
-    styles[`${size}Text`],
-    styles[`${variant}Text`],
-  ];
+  switch (variant) {
+    case "secondary":
+      variantStyle = { backgroundColor: secondaryBg };
+      textColor = defaultTextColor;
+      break;
+    case "outline":
+      variantStyle = { backgroundColor: "transparent", borderWidth: 1, borderColor: tint };
+      textColor = tint;
+      break;
+    default:
+      variantStyle = { backgroundColor: Colors.light.primary };
+      textColor = "#fff";
+  }
 
   return (
-    <TouchableOpacity style={buttonStyle} activeOpacity={0.7} {...props}>
-      <ThemedText type="defaultSemiBold" style={textStyle}>
+    <TouchableOpacity
+      style={[styles.base, styles[size], variantStyle, style]}
+      activeOpacity={0.7}
+      {...props}
+    >
+      <ThemedText
+        type="defaultSemiBold"
+        style={[styles.text, styles[`${size}Text`], { color: textColor }]}
+      >
         {title}
       </ThemedText>
     </TouchableOpacity>
@@ -46,7 +65,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  // Size variants
   small: {
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -59,19 +77,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
   },
-  // Variant styles
-  primary: {
-    backgroundColor: "#c7aa3c",
-  },
-  secondary: {
-    backgroundColor: "#e6e6e6",
-  },
-  outline: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: Colors.light.tint,
-  },
-  // Text styles
   text: {
     textAlign: "center",
   },
@@ -83,14 +88,5 @@ const styles = StyleSheet.create({
   },
   largeText: {
     fontSize: 18,
-  },
-  primaryText: {
-    color: "#fff",
-  },
-  secondaryText: {
-    color: Colors.light.text,
-  },
-  outlineText: {
-    color: Colors.light.tint,
   },
 });

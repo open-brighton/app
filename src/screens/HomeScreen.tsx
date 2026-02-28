@@ -1,8 +1,8 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React, { useCallback, useState } from "react";
-import { Platform, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import React from "react";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 
 import { Card } from "@/components/Card";
+import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
 import { HelloWave } from "@/components/HelloWave";
 import { LottieAnimation } from "@/components/LottieAnimation";
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
@@ -10,7 +10,8 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useRefresh } from "@/hooks/useRefresh";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 /** Parallax + welcome content for NUX (e.g. welcome step). */
 export function HomeParallaxContent({
@@ -30,31 +31,25 @@ export function HomeParallaxContent({
       }
     >
       <ThemedView style={nuxStyles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Welcome to Open Brighton!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={nuxStyles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+        <ThemedText type="subtitle">Discover your town</ThemedText>
         <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">screens/HomeScreen.tsx</ThemedText> to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: "cmd + d", android: "cmd + m", web: "F12" })}
-          </ThemedText>{" "}
-          to open developer tools.
+          Browse local events, businesses, and community resources — all in one place.
         </ThemedText>
       </ThemedView>
       <ThemedView style={nuxStyles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>{`Tap the Explore tab to learn more about what's included in this starter app.`}</ThemedText>
+        <ThemedText type="subtitle">Explore the map</ThemedText>
+        <ThemedText>
+          Tap the Explore tab to see what's happening around Brighton.
+        </ThemedText>
       </ThemedView>
       <ThemedView style={nuxStyles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
+        <ThemedText type="subtitle">Ask the assistant</ThemedText>
         <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+          Use the Chat tab to ask questions about Brighton — events, parking, services, and more.
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
@@ -67,28 +62,9 @@ const FEED_CARDS = [
   { id: "3", title: "Bulk Yard Pickup", subtitle: "Curbside collection dates" },
 ] as const;
 
-function FeedCard({
-  title,
-  subtitle,
-}: { title: string; subtitle: string }) {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const iconColor = isDark ? Colors.dark.icon : Colors.light.icon;
-  const placeholderBg = isDark
-    ? "rgba(155, 161, 166, 0.25)"
-    : "rgba(104, 112, 118, 0.2)";
-  const imageArea = (
-    <View
-      style={[styles.cardImagePlaceholder, { backgroundColor: placeholderBg }]}
-    >
-      <MaterialIcons name="image" size={40} color={iconColor} />
-    </View>
-  );
+function FeedCard({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <Card
-      imageArea={imageArea}
-      onPress={() => {}}
-    >
+    <Card imageArea={<CardImagePlaceholder icon="image" />} onPress={() => {}}>
       <ThemedText type="subtitle" style={styles.cardTitle}>
         {title}
       </ThemedText>
@@ -98,13 +74,8 @@ function FeedCard({
 }
 
 export const HomeScreen = () => {
-  const { colorScheme } = useColorScheme();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
+  const tint = useThemeColor({}, "tint");
+  const { refreshing, onRefresh } = useRefresh();
 
   return (
     <ThemedSafeAreaView>
@@ -116,17 +87,13 @@ export const HomeScreen = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint}
-            colors={[colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint]}
+            tintColor={tint}
+            colors={[tint]}
           />
         }
       >
         {FEED_CARDS.map((card) => (
-          <FeedCard
-            key={card.id}
-            title={card.title}
-            subtitle={card.subtitle}
-          />
+          <FeedCard key={card.id} title={card.title} subtitle={card.subtitle} />
         ))}
       </ScrollView>
     </ThemedSafeAreaView>
@@ -141,11 +108,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 24,
-  },
-  cardImagePlaceholder: {
-    height: 120,
-    alignItems: "center",
-    justifyContent: "center",
   },
   cardTitle: {
     marginBottom: 2,

@@ -1,15 +1,15 @@
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
-import {
-  Animated,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import React, { useEffect } from "react";
+import { StyleSheet, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type MapLayerId = string;
@@ -23,17 +23,25 @@ export type MapLayer = {
 };
 
 type MapLayerTrayProps = {
+  isOpen: boolean;
   layers: MapLayer[];
   onLayerToggle: (id: MapLayerId, enabled: boolean) => void;
+  onClose: () => void;
 };
 
-const COLLAPSED_HEIGHT = 68;
-const EXPANDED_HEIGHT = 320;
+const HANDLE_HEIGHT = 28;
+const DIVIDER_HEIGHT = 1;
+const ROW_HEIGHT = 64;
+const BOTTOM_PADDING = 16;
 
-export function MapLayerTray({ layers, onLayerToggle }: MapLayerTrayProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const animatedHeight = useRef(new Animated.Value(COLLAPSED_HEIGHT)).current;
-  const contentOpacity = useRef(new Animated.Value(0)).current;
+const SPRING = { damping: 22, stiffness: 280, mass: 0.9 } as const;
+
+export function MapLayerTray({
+  isOpen,
+  layers,
+  onLayerToggle,
+  onClose,
+}: MapLayerTrayProps) {
   const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -44,79 +52,57 @@ export function MapLayerTray({ layers, onLayerToggle }: MapLayerTrayProps) {
   const dividerColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)";
   const handleColor = isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)";
 
-  const activeCount = layers.filter((l) => l.enabled).length;
+  const bottomPad = Math.max(insets.bottom, BOTTOM_PADDING);
+  const trayHeight =
+    HANDLE_HEIGHT + DIVIDER_HEIGHT + layers.length * ROW_HEIGHT + bottomPad;
 
-  const toggle = () => {
-    const expanding = !isExpanded;
-    setIsExpanded(expanding);
+  // translateY: 0 = fully visible, trayHeight = hidden below screen
+  const translateY = useSharedValue(trayHeight);
 
-    Animated.parallel([
-      Animated.spring(animatedHeight, {
-        toValue: expanding
-          ? Math.min(EXPANDED_HEIGHT, COLLAPSED_HEIGHT + layers.length * 72 + 56)
-          : COLLAPSED_HEIGHT,
-        useNativeDriver: false,
-        tension: 65,
-        friction: 11,
-      }),
-      Animated.timing(contentOpacity, {
-        toValue: expanding ? 1 : 0,
-        duration: expanding ? 200 : 100,
-        useNativeDriver: false,
-        delay: expanding ? 80 : 0,
-      }),
-    ]).start();
-  };
+  useEffect(() => {
+    translateY.value = withSpring(isOpen ? 0 : trayHeight, SPRING);
+  }, [isOpen, trayHeight]);
 
-  const paddingBottom = Math.max(insets.bottom, 12);
+  const panGesture = Gesture.Pan()
+    .activeOffsetY(8)
+    .onUpdate((e) => {
+      // Only allow dragging downward
+      translateY.value = Math.max(0, e.translationY);
+    })
+    .onEnd((e) => {
+      const shouldDismiss =
+        e.translationY > trayHeight * 0.3 || e.velocityY > 600;
+      if (shouldDismiss) {
+        translateY.value = withSpring(trayHeight, SPRING);
+        runOnJS(onClose)();
+      } else {
+        translateY.value = withSpring(0, SPRING);
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
   return (
-    <Animated.View
-      style={[
-        styles.tray,
-        {
-          height: animatedHeight,
-          paddingBottom,
-          backgroundColor: bg,
-        },
-      ]}
-    >
-      {/* Drag handle */}
-      <View style={styles.handleRow}>
-        <View style={[styles.handle, { backgroundColor: handleColor }]} />
-      </View>
-
-      {/* Header — always visible, taps to toggle */}
-      <TouchableOpacity
-        onPress={toggle}
-        style={styles.header}
-        activeOpacity={0.7}
-        hitSlop={{ top: 8, bottom: 8 }}
+    <GestureDetector gesture={panGesture}>
+      <Animated.View
+        pointerEvents={isOpen ? "auto" : "none"}
+        style={[
+          styles.tray,
+          { height: trayHeight, paddingBottom: bottomPad, backgroundColor: bg },
+          animatedStyle,
+        ]}
       >
-        <View style={styles.headerLeft}>
-          <Ionicons
-            name="layers-outline"
-            size={20}
-            color={iconColor}
-            style={styles.headerIcon}
-          />
-          <Text style={[styles.headerTitle, { color: textColor }]}>Layers</Text>
-          {activeCount > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{activeCount}</Text>
-            </View>
-          )}
+        {/* Drag handle */}
+        <View style={styles.handleRow}>
+          <View style={[styles.handle, { backgroundColor: handleColor }]} />
         </View>
-        <Ionicons
-          name={isExpanded ? "chevron-down" : "chevron-up"}
-          size={18}
-          color={iconColor}
-        />
-      </TouchableOpacity>
 
-      {/* Layer rows — fade in when expanded */}
-      <Animated.View style={[styles.layerList, { opacity: contentOpacity }]}>
+        {/* Divider */}
         <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+
+        {/* Layer rows */}
         {layers.map((layer, index) => (
           <View key={layer.id}>
             <View style={styles.layerRow}>
@@ -162,7 +148,7 @@ export function MapLayerTray({ layers, onLayerToggle }: MapLayerTrayProps) {
           </View>
         ))}
       </Animated.View>
-    </Animated.View>
+    </GestureDetector>
   );
 }
 
@@ -179,63 +165,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 10,
-    overflow: "hidden",
   },
   handleRow: {
     alignItems: "center",
     paddingTop: 10,
-    paddingBottom: 2,
+    paddingBottom: 6,
   },
   handle: {
     width: 36,
     height: 4,
     borderRadius: 2,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  headerIcon: {
-    marginRight: 2,
-  },
-  headerTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    letterSpacing: 0.2,
-  },
-  badge: {
-    backgroundColor: Colors.light.primary,
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 5,
-  },
-  badgeText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  layerList: {
-    flex: 1,
-    overflow: "hidden",
-  },
   divider: {
     height: StyleSheet.hairlineWidth,
-    marginHorizontal: 0,
   },
   rowDivider: {
     height: StyleSheet.hairlineWidth,
-    marginLeft: 64,
+    marginLeft: 68,
     marginRight: 20,
   },
   layerRow: {
@@ -243,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    height: ROW_HEIGHT,
   },
   layerInfo: {
     flexDirection: "row",

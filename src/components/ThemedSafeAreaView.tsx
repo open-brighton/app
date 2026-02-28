@@ -1,13 +1,14 @@
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import React from "react";
+import { StyleProp, ViewStyle } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 
 const DEFAULT_EDGES: Edge[] = ["left", "right", "bottom"];
 
 interface ThemedSafeAreaViewProps {
   children: React.ReactNode;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   /** Safe area edges to apply. Defaults to left, right, bottom (no top, for screens with a header). Use ["top", "left", "right", "bottom"] for full-screen screens without a header. */
   edges?: Edge[];
 }

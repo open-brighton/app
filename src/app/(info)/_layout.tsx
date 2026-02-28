@@ -27,7 +27,8 @@ export default function InfoLayout() {
       <Stack.Screen name="privacy" />
       <Stack.Screen name="terms" />
       <Stack.Screen name="settings" />
-      <Stack.Screen name="local-business" />
+      <Stack.Screen name="local-business/index" />
+      <Stack.Screen name="local-business/[slug]" />
       <Stack.Screen name="events" />
       <Stack.Screen name="resources" />
     </Stack>

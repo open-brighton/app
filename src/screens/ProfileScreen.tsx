@@ -1,26 +1,45 @@
-import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import React, { useState } from "react";
+import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import { SettingsRow } from "@/components/SettingsRow";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { VStack } from "@/components/VStack";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
-// Placeholder data for profile UI (replace with real user data when auth is implemented)
+// Placeholder data (replace with real user data when auth is implemented)
 const profileData = {
   firstName: "John",
   lastName: "Doe",
   email: "user@example.com",
   phone: "(555) 000-0000",
-  addressStreet: "123 Example St",
-  addressCityStateZip: "City, ST 00000",
+  address: "123 Example St, City, ST 00000",
 };
 
 export function ProfileScreen() {
-  const { colorScheme } = useColorScheme();
+  const primary = useThemeColor({ light: Colors.light.primary, dark: Colors.dark.primary }, "primary");
+  const background = useThemeColor({}, "background");
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
+
+  const handleAvatarPress = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      setAvatarUri(result.assets[0].uri);
+    }
+  };
 
   return (
     <ThemedSafeAreaView>
@@ -30,46 +49,29 @@ export function ProfileScreen() {
             {profileData.firstName} {profileData.lastName}
           </ThemedText>
 
-          {/* Avatar Section */}
           <View style={styles.avatarContainer}>
-            <View style={[
-              styles.avatar, 
-              { backgroundColor: colorScheme === "dark" ? Colors.dark.primary : Colors.light.primary }
-            ]}>
-              <IconSymbol
-                name="person.fill"
-                size={60}
-                color={colorScheme === "dark" ? Colors.dark.background : Colors.light.background}
-              />
-            </View>
+            <Pressable onPress={handleAvatarPress} style={({ pressed }) => [{ opacity: pressed ? 0.75 : 1 }]}>
+              <View style={[styles.avatar, { backgroundColor: primary }]}>
+                {avatarUri ? (
+                  <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
+                ) : (
+                  <IconSymbol name="person.fill" size={60} color={background} />
+                )}
+              </View>
+              <View style={[styles.editBadge, { backgroundColor: primary }]}>
+                <IconSymbol name="camera.fill" size={14} color={background} />
+              </View>
+            </Pressable>
           </View>
 
-          {/* Profile Information */}
           <VStack gap={20} style={styles.profileInfo}>
-            {/* Contact Information */}
             <ThemedView style={styles.section}>
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 Contact Information
               </ThemedText>
-              <ThemedView style={styles.infoItem}>
-                <ThemedText type="defaultSemiBold">Email</ThemedText>
-                <ThemedText>{profileData.email}</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.infoItem}>
-                <ThemedText type="defaultSemiBold">Phone</ThemedText>
-                <ThemedText>{profileData.phone}</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.addressItem}>
-                <ThemedText type="defaultSemiBold">Address</ThemedText>
-                <View style={styles.addressLines}>
-                  <ThemedText style={styles.addressText}>
-                    {profileData.addressStreet}
-                  </ThemedText>
-                  <ThemedText style={styles.addressText}>
-                    {profileData.addressCityStateZip}
-                  </ThemedText>
-                </View>
-              </ThemedView>
+              <SettingsRow label="Email" value={profileData.email} />
+              <SettingsRow label="Phone" value={profileData.phone} />
+              <SettingsRow label="Address" value={profileData.address} />
             </ThemedView>
           </VStack>
         </ThemedView>
@@ -97,6 +99,24 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
+  },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+  },
+  editBadge: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "white",
   },
   profileInfo: {
     flex: 1,
@@ -106,35 +126,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: 15,
-  },
-  infoItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  addressItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  addressLines: {
-    flex: 1,
-    alignItems: "flex-end",
-    marginLeft: 10,
-    gap: 2,
-  },
-  addressText: {
-    textAlign: "right",
   },
 });
 

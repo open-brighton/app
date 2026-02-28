@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 
 type ChatContextValue = {
   messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  addMessage: (message: Message) => void;
   resetChat: () => void;
 };
 
@@ -12,12 +12,16 @@ const ChatContext = createContext<ChatContextValue | null>(null);
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const addMessage = useCallback((message: Message) => {
+    setMessages((prev) => [message, ...prev]);
+  }, []);
+
   const resetChat = useCallback(() => {
     setMessages([]);
   }, []);
 
   return (
-    <ChatContext.Provider value={{ messages, setMessages, resetChat }}>
+    <ChatContext.Provider value={{ messages, addMessage, resetChat }}>
       {children}
     </ChatContext.Provider>
   );

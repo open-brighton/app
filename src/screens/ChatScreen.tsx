@@ -9,7 +9,7 @@ import { CHAT } from "@/lib/graphql/mutations";
 import type { ChatInput, ChatResponse } from "@/lib/graphql/types";
 import type { Message } from "@/types/chat";
 import { useMutation } from "@apollo/client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Keyboard,
@@ -31,36 +31,53 @@ const EXAMPLE_PROMPTS = [
   "How do I contact the council?",
 ];
 
-const USER_BUBBLE_COLOR_LIGHT = "#0a7ea4";
-const USER_BUBBLE_COLOR_DARK = "#c7aa3c";
-const ASSISTANT_BUBBLE_LIGHT = "#e8f4f8";
-const ASSISTANT_BUBBLE_DARK = "#1a3878";
 const INPUT_BORDER_LIGHT = "#ccc";
 const INPUT_BORDER_DARK = "#6b7280";
 
+/** Returns theme-aware Markdown styles. Called once per colorScheme change. */
+function buildMarkdownStyles(isDark: boolean) {
+  const codeBg = isDark ? "#1f2937" : "#d1d5db";
+  const textColor = isDark ? "#f3f4f6" : "#111827";
+  return {
+    body: { color: textColor, fontSize: 16, lineHeight: 22, margin: 0 },
+    paragraph: { marginTop: 0, marginBottom: 6 },
+    bullet_list: { marginVertical: 4 },
+    ordered_list: { marginVertical: 4 },
+    code_inline: { backgroundColor: codeBg, borderRadius: 4, paddingHorizontal: 4, fontFamily: "monospace" },
+    fence: { backgroundColor: codeBg, borderRadius: 8, padding: 10, marginVertical: 6 },
+    code_block: { backgroundColor: codeBg, borderRadius: 8, padding: 10, marginVertical: 6 },
+    heading1: { fontSize: 20, fontWeight: "700", marginBottom: 4, marginTop: 6 },
+    heading2: { fontSize: 18, fontWeight: "700", marginBottom: 4, marginTop: 6 },
+    heading3: { fontSize: 16, fontWeight: "700", marginBottom: 2, marginTop: 4 },
+    heading4: { fontSize: 15, fontWeight: "600", marginBottom: 2, marginTop: 4 },
+    heading5: { fontSize: 14, fontWeight: "600", marginBottom: 2, marginTop: 4 },
+    heading6: { fontSize: 14, fontWeight: "600", marginBottom: 2, marginTop: 4 },
+    strong: { fontWeight: "700" },
+  } as const;
+}
+
 function ChatMessageBubble({ item }: { item: Message }) {
   const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const isUser = item.role === "user";
-  const backgroundColor = isUser
-    ? colorScheme === "dark"
-      ? USER_BUBBLE_COLOR_DARK
-      : USER_BUBBLE_COLOR_LIGHT
-    : colorScheme === "dark"
-      ? ASSISTANT_BUBBLE_DARK
-      : ASSISTANT_BUBBLE_LIGHT;
-  const userTextColor = isUser
-    ? colorScheme === "dark"
-      ? "#0b235a"
-      : "#fff"
-    : undefined;
-  const assistantTextColor = colorScheme === "dark" ? "#f3f4f6" : "#111827";
+
+  const userBubbleBg = useThemeColor(
+    { light: Colors.light.chatUserBubble, dark: Colors.dark.chatUserBubble },
+    "chatUserBubble",
+  );
+  const assistantBubbleBg = useThemeColor(
+    { light: Colors.light.chatAssistantBubble, dark: Colors.dark.chatAssistantBubble },
+    "chatAssistantBubble",
+  );
+
+  const backgroundColor = isUser ? userBubbleBg : assistantBubbleBg;
+  const userTextColor = isDark ? Colors.dark.background : "#fff";
+
+  const markdownStyles = useMemo(() => buildMarkdownStyles(isDark), [isDark]);
 
   return (
     <View
-      style={[
-        styles.bubbleWrap,
-        isUser ? styles.bubbleWrapUser : styles.bubbleWrapAssistant,
-      ]}
+      style={[styles.bubbleWrap, isUser ? styles.bubbleWrapUser : styles.bubbleWrapAssistant]}
       accessibilityLabel={isUser ? "User message" : "Assistant message"}
       accessibilityRole="text"
     >
@@ -74,46 +91,7 @@ function ChatMessageBubble({ item }: { item: Message }) {
             {item.content}
           </ThemedText>
         ) : (
-          <Markdown
-            style={{
-              body: {
-                color: assistantTextColor,
-                fontSize: 16,
-                lineHeight: 22,
-                margin: 0,
-              },
-              paragraph: { marginTop: 0, marginBottom: 6 },
-              bullet_list: { marginVertical: 4 },
-              ordered_list: { marginVertical: 4 },
-              code_inline: {
-                backgroundColor: colorScheme === "dark" ? "#1f2937" : "#d1d5db",
-                borderRadius: 4,
-                paddingHorizontal: 4,
-                fontFamily: "monospace",
-              },
-              fence: {
-                backgroundColor: colorScheme === "dark" ? "#1f2937" : "#d1d5db",
-                borderRadius: 8,
-                padding: 10,
-                marginVertical: 6,
-              },
-              code_block: {
-                backgroundColor: colorScheme === "dark" ? "#1f2937" : "#d1d5db",
-                borderRadius: 8,
-                padding: 10,
-                marginVertical: 6,
-              },
-              heading1: { fontSize: 20, fontWeight: "700", marginBottom: 4, marginTop: 6 },
-              heading2: { fontSize: 18, fontWeight: "700", marginBottom: 4, marginTop: 6 },
-              heading3: { fontSize: 16, fontWeight: "700", marginBottom: 2, marginTop: 4 },
-              heading4: { fontSize: 15, fontWeight: "600", marginBottom: 2, marginTop: 4 },
-              heading5: { fontSize: 14, fontWeight: "600", marginBottom: 2, marginTop: 4 },
-              heading6: { fontSize: 14, fontWeight: "600", marginBottom: 2, marginTop: 4 },
-              strong: { fontWeight: "700" },
-            }}
-          >
-            {item.content}
-          </Markdown>
+          <Markdown style={markdownStyles}>{item.content}</Markdown>
         )}
       </View>
     </View>
@@ -121,13 +99,14 @@ function ChatMessageBubble({ item }: { item: Message }) {
 }
 
 function TypingIndicator() {
-  const { colorScheme } = useColorScheme();
-  const backgroundColor =
-    colorScheme === "dark" ? ASSISTANT_BUBBLE_DARK : ASSISTANT_BUBBLE_LIGHT;
+  const assistantBubbleBg = useThemeColor(
+    { light: Colors.light.chatAssistantBubble, dark: Colors.dark.chatAssistantBubble },
+    "chatAssistantBubble",
+  );
 
   return (
     <View style={[styles.bubbleWrap, styles.bubbleWrapAssistant]}>
-      <View style={[styles.bubble, { backgroundColor }]}>
+      <View style={[styles.bubble, { backgroundColor: assistantBubbleBg }]}>
         <ThemedText style={styles.bubbleText}>Thinking…</ThemedText>
       </View>
     </View>
@@ -135,7 +114,7 @@ function TypingIndicator() {
 }
 
 export function ChatScreen() {
-  const { messages, setMessages } = useChatContext();
+  const { messages, addMessage } = useChatContext();
   const [inputText, setInputText] = useState("");
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -145,11 +124,9 @@ export function ChatScreen() {
   const insets = useSafeAreaInsets();
   const background = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
   const { colorScheme } = useColorScheme();
-  const inputBorderColor =
-    colorScheme === "dark" ? INPUT_BORDER_DARK : INPUT_BORDER_LIGHT;
-  const tintColor =
-    colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint;
+  const inputBorderColor = colorScheme === "dark" ? INPUT_BORDER_DARK : INPUT_BORDER_LIGHT;
 
   useEffect(() => {
     const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
@@ -177,7 +154,7 @@ export function ChatScreen() {
         content: trimmed,
         timestamp: new Date().toISOString(),
       };
-      setMessages((prev) => [userMessage, ...prev]);
+      addMessage(userMessage);
       setInputText("");
       setIsAssistantTyping(true);
 
@@ -188,29 +165,26 @@ export function ChatScreen() {
 
       sendChat({ variables: { input: { messages: messagesForApi } } })
         .then(({ data }) => {
-          const reply = data?.chat ?? "";
-          const assistantMessage: Message = {
+          addMessage({
             id: `assistant-${Date.now()}`,
             role: "assistant",
-            content: reply,
+            content: data?.chat ?? "",
             timestamp: new Date().toISOString(),
-          };
-          setMessages((prev) => [assistantMessage, ...prev]);
+          });
         })
         .catch(() => {
-          const errorMessage: Message = {
+          addMessage({
             id: `error-${Date.now()}`,
             role: "assistant",
             content: "Something went wrong. Please try again.",
             timestamp: new Date().toISOString(),
-          };
-          setMessages((prev) => [errorMessage, ...prev]);
+          });
         })
         .finally(() => {
           setIsAssistantTyping(false);
         });
     },
-    [isAssistantTyping, messages, sendChat],
+    [isAssistantTyping, messages, addMessage, sendChat],
   );
 
   const handleSend = useCallback(() => {
@@ -224,7 +198,6 @@ export function ChatScreen() {
   }, []);
 
   const listHeaderComponent = isAssistantTyping ? <TypingIndicator /> : null;
-
   const inputRowMarginBottom = keyboardHeight > 0 ? keyboardHeight - insets.bottom : 0;
 
   return (
@@ -280,50 +253,43 @@ export function ChatScreen() {
           <View
             style={[
               styles.inputRow,
-              {
-                borderTopColor: inputBorderColor,
-                marginBottom: inputRowMarginBottom,
-              },
+              { borderTopColor: inputBorderColor, marginBottom: inputRowMarginBottom },
             ]}
           >
-          <TextInput
-            style={[
-              styles.input,
-              {
-                color: textColor,
-                borderColor: inputBorderColor,
-                backgroundColor: background,
-              },
-            ]}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder="Message…"
-            placeholderTextColor={colorScheme === "dark" ? "#9CA3AF" : "#6b7280"}
-            multiline
-            maxLength={4000}
-            editable={!isAssistantTyping}
-          />
-          <Pressable
-            onPress={handleSend}
-            disabled={!canSend}
-            style={({ pressed }) => [
-              styles.sendButton,
-              {
-                backgroundColor: canSend ? tintColor : inputBorderColor,
-                opacity: pressed && canSend ? 0.8 : 1,
-              },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Send message"
-          >
-            <ThemedText
-              style={styles.sendButtonText}
-              lightColor="#fff"
-              darkColor="#0b235a"
+            <TextInput
+              style={[
+                styles.input,
+                { color: textColor, borderColor: inputBorderColor, backgroundColor: background },
+              ]}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Message…"
+              placeholderTextColor={colorScheme === "dark" ? "#9CA3AF" : "#6b7280"}
+              multiline
+              maxLength={4000}
+              editable={!isAssistantTyping}
+            />
+            <Pressable
+              onPress={handleSend}
+              disabled={!canSend}
+              style={({ pressed }) => [
+                styles.sendButton,
+                {
+                  backgroundColor: canSend ? tintColor : inputBorderColor,
+                  opacity: pressed && canSend ? 0.8 : 1,
+                },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Send message"
             >
-              Send
-            </ThemedText>
-          </Pressable>
+              <ThemedText
+                style={styles.sendButtonText}
+                lightColor="#fff"
+                darkColor={Colors.dark.background}
+              >
+                Send
+              </ThemedText>
+            </Pressable>
           </View>
         </View>
       </View>

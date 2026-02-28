@@ -1,23 +1,23 @@
 import React from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 interface HStackProps {
   children: React.ReactNode;
   gap?: number;
   container?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function HStack({
-  children,
-  gap = 0,
-  container = false,
-  style,
-}: HStackProps) {
-  const containerStyle = container ? { paddingHorizontal: 20 } : {};
-
+export function HStack({ children, gap = 0, container = false, style }: HStackProps) {
   return (
-    <View style={[styles.hstack, { gap }, containerStyle, style]}>
+    <View
+      style={[
+        styles.hstack,
+        { gap },
+        container && { paddingHorizontal: 20 },
+        style,
+      ]}
+    >
       {children}
     </View>
   );
@@ -25,7 +25,6 @@ export function HStack({
 
 const styles = StyleSheet.create({
   hstack: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

@@ -23,6 +23,8 @@ import { SplashScreen } from "@/components/SplashScreen";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ColorSchemeProvider, useColorScheme } from "@/contexts/ColorSchemeContext";
 import { ChatProvider, useChatContext } from "@/contexts/ChatContext";
+import { ExploreProvider, useExploreContext } from "@/contexts/ExploreContext";
+import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { client } from "@/lib/apollo";
@@ -124,9 +126,28 @@ function DrawerHeaderRight() {
   const isProfileScreen =
     segments.includes("profile") && !segments.includes("settings");
   const isChatScreen = segments.includes("chat");
+  const isExploreScreen = segments.includes("explore");
 
   const { messages, resetChat } = useChatContext();
   const hasMessages = messages.length > 0;
+  const { isLayerTrayOpen, toggleLayerTray } = useExploreContext();
+
+  if (isExploreScreen) {
+    return (
+      <TouchableOpacity
+        onPress={toggleLayerTray}
+        style={{ marginRight: 16, padding: 4 }}
+        accessibilityRole="button"
+        accessibilityLabel="Toggle map layers"
+      >
+        <Ionicons
+          name="layers"
+          size={24}
+          color={isLayerTrayOpen ? Colors.light.primary : color}
+        />
+      </TouchableOpacity>
+    );
+  }
 
   if (isChatScreen && hasMessages) {
     return (
@@ -233,6 +254,7 @@ export const RootLayout = () => {
         urlScheme={Linking.createURL("")}
       >
         <ColorSchemeProvider>
+          <ExploreProvider>
           <ChatProvider>
             <ErrorBoundary>
               <ThemedRootContent />
@@ -244,6 +266,7 @@ export const RootLayout = () => {
               )}
             </ErrorBoundary>
           </ChatProvider>
+          </ExploreProvider>
         </ColorSchemeProvider>
       </StripeProvider>
     </ApolloProvider>

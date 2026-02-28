@@ -1,33 +1,27 @@
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Switch } from "react-native";
 
-import { HStack } from "@/components/HStack";
+import { SettingsRow } from "@/components/SettingsRow";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export function SettingsScreen() {
   const { ENVIRONMENT, APP_VERSION, BUILD_NUMBER, BUNDLE_IDENTIFIER } = config;
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const { colorScheme, setColorScheme } = useColorScheme();
+  const router = useRouter();
+
+  const switchTrack = useThemeColor({}, "switchTrack");
+  const itemBg = useThemeColor({}, "itemBackground");
 
   const toggleColorScheme = () => {
     setColorScheme(colorScheme === "dark" ? "light" : "dark");
-  };
-
-  const toggleNotifications = () => {
-    setNotificationsEnabled(!notificationsEnabled);
   };
 
   return (
@@ -38,112 +32,46 @@ export function SettingsScreen() {
             <ThemedText type="subtitle" style={styles.sectionTitle}>
               App Settings
             </ThemedText>
-
-            <View style={styles.settingItem}>
-              <View style={styles.settingInfo}>
+            <ThemedView style={[styles.settingItem, { backgroundColor: itemBg }]}>
+              <ThemedView style={styles.settingInfo}>
                 <ThemedText type="defaultSemiBold">Dark Mode</ThemedText>
-                <ThemedText type="default">
-                  {colorScheme === "dark" ? "On" : "Off"}
-                </ThemedText>
-              </View>
+                <ThemedText>{colorScheme === "dark" ? "On" : "Off"}</ThemedText>
+              </ThemedView>
               <Switch
                 value={colorScheme === "dark"}
                 onValueChange={toggleColorScheme}
-                trackColor={{ false: "#767577", true: Colors.light.tint }}
-                thumbColor={colorScheme === "dark" ? "#f4f3f4" : "#f4f3f4"}
+                trackColor={{ false: switchTrack, true: Colors.light.tint }}
+                thumbColor="#f4f3f4"
               />
-            </View>
+            </ThemedView>
           </ThemedView>
 
           <ThemedView style={styles.section}>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
               Notifications
             </ThemedText>
-
-            <View style={styles.settingItem}>
-              <View style={styles.settingInfo}>
-                <ThemedText type="defaultSemiBold">
-                  Push Notifications
-                </ThemedText>
-                <ThemedText type="default">
-                  {notificationsEnabled ? "On" : "Off"}
-                </ThemedText>
-              </View>
+            <ThemedView style={[styles.settingItem, { backgroundColor: itemBg }]}>
+              <ThemedView style={styles.settingInfo}>
+                <ThemedText type="defaultSemiBold">Push Notifications</ThemedText>
+                <ThemedText>{notificationsEnabled ? "On" : "Off"}</ThemedText>
+              </ThemedView>
               <Switch
                 value={notificationsEnabled}
-                onValueChange={toggleNotifications}
-                trackColor={{ false: "#767577", true: Colors.light.tint }}
-                thumbColor={notificationsEnabled ? "#f4f3f4" : "#f4f3f4"}
+                onValueChange={setNotificationsEnabled}
+                trackColor={{ false: switchTrack, true: Colors.light.tint }}
+                thumbColor="#f4f3f4"
               />
-            </View>
+            </ThemedView>
           </ThemedView>
 
           <ThemedView style={styles.section}>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
               Information
             </ThemedText>
-
-            <ThemedView style={styles.item}>
-              <Link href="/feedback" asChild>
-                <TouchableOpacity style={{ flex: 1 }}>
-                  <HStack gap={10}>
-                    <ThemedText type="defaultSemiBold">
-                      Submit Feedback
-                    </ThemedText>
-                    <IconSymbol
-                      size={16}
-                      name="chevron.right"
-                      color={Colors.light.primary}
-                    />
-                  </HStack>
-                </TouchableOpacity>
-              </Link>
-            </ThemedView>
-
-            <ThemedView style={styles.item}>
-              <Link href="/contact" asChild>
-                <TouchableOpacity style={{ flex: 1 }}>
-                  <HStack gap={10}>
-                    <ThemedText type="defaultSemiBold">Contact</ThemedText>
-                    <IconSymbol
-                      size={16}
-                      name="chevron.right"
-                      color={Colors.light.primary}
-                    />
-                  </HStack>
-                </TouchableOpacity>
-              </Link>
-            </ThemedView>
-
-            <ThemedView style={styles.item}>
-              <Link href="/about" asChild>
-                <TouchableOpacity style={{ flex: 1 }}>
-                  <HStack gap={10}>
-                    <ThemedText type="defaultSemiBold">About</ThemedText>
-                    <IconSymbol
-                      size={16}
-                      name="chevron.right"
-                      color={Colors.light.primary}
-                    />
-                  </HStack>
-                </TouchableOpacity>
-              </Link>
-            </ThemedView>
-
-            <ThemedView style={styles.item}>
-              <Link href="/donate" asChild>
-                <TouchableOpacity style={{ flex: 1 }}>
-                  <HStack gap={10}>
-                    <ThemedText type="defaultSemiBold">Donate</ThemedText>
-                    <IconSymbol
-                      size={16}
-                      name="chevron.right"
-                      color={Colors.light.primary}
-                    />
-                  </HStack>
-                </TouchableOpacity>
-              </Link>
-            </ThemedView>
+            <SettingsRow label="Submit Feedback" onPress={() => router.push("/feedback")} />
+            <SettingsRow label="Contact" onPress={() => router.push("/contact")} />
+            <SettingsRow label="About" onPress={() => router.push("/about")} />
+            <SettingsRow label="Donate" onPress={() => router.push("/donate")} />
           </ThemedView>
 
           {__DEV__ && (
@@ -151,21 +79,7 @@ export function SettingsScreen() {
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 Development
               </ThemedText>
-
-              <ThemedView style={styles.item}>
-                <Link href="/settings/debug" asChild>
-                  <TouchableOpacity style={{ flex: 1 }}>
-                    <HStack gap={10}>
-                      <ThemedText type="defaultSemiBold">Debug</ThemedText>
-                      <IconSymbol
-                        size={16}
-                        name="chevron.right"
-                        color={Colors.light.primary}
-                      />
-                    </HStack>
-                  </TouchableOpacity>
-                </Link>
-              </ThemedView>
+              <SettingsRow label="Debug" onPress={() => router.push("/settings/debug")} />
             </ThemedView>
           )}
 
@@ -173,26 +87,11 @@ export function SettingsScreen() {
             <ThemedText type="subtitle" style={styles.sectionTitle}>
               App Details
             </ThemedText>
-
-            <ThemedView style={styles.item}>
-              <ThemedText type="defaultSemiBold">App Version</ThemedText>
-              <ThemedText>{APP_VERSION}</ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.item}>
-              <ThemedText type="defaultSemiBold">Environment</ThemedText>
-              <ThemedText>{ENVIRONMENT}</ThemedText>
-            </ThemedView>
-            {BUILD_NUMBER && (
-              <ThemedView style={styles.item}>
-                <ThemedText type="defaultSemiBold">Build Number</ThemedText>
-                <ThemedText>{BUILD_NUMBER}</ThemedText>
-              </ThemedView>
-            )}
+            <SettingsRow label="App Version" value={APP_VERSION} />
+            <SettingsRow label="Environment" value={ENVIRONMENT} />
+            {BUILD_NUMBER && <SettingsRow label="Build Number" value={BUILD_NUMBER} />}
             {BUNDLE_IDENTIFIER && (
-              <ThemedView style={styles.item}>
-                <ThemedText type="defaultSemiBold">Bundle ID</ThemedText>
-                <ThemedText>{BUNDLE_IDENTIFIER}</ThemedText>
-              </ThemedView>
+              <SettingsRow label="Bundle ID" value={BUNDLE_IDENTIFIER} />
             )}
           </ThemedView>
         </ThemedView>
@@ -214,23 +113,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: 15,
   },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 8,
-    marginBottom: 10,
-  },
   settingItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 8,
     marginBottom: 10,
   },

@@ -1,12 +1,12 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React, { useCallback, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import React from "react";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 import { Card } from "@/components/Card";
+import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useRefresh } from "@/hooks/useRefresh";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const BUSINESS_CARDS = [
   {
@@ -46,22 +46,8 @@ function BusinessCard({
   category,
   address,
 }: { name: string; category: string; address: string }) {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const iconColor = isDark ? Colors.dark.icon : Colors.light.icon;
-  const placeholderBg = isDark
-    ? "rgba(155, 161, 166, 0.25)"
-    : "rgba(104, 112, 118, 0.2)";
-
   return (
-    <Card
-      imageArea={
-        <View style={[styles.cardImagePlaceholder, { backgroundColor: placeholderBg }]}>
-          <MaterialIcons name="storefront" size={40} color={iconColor} />
-        </View>
-      }
-      onPress={() => {}}
-    >
+    <Card imageArea={<CardImagePlaceholder icon="storefront" />} onPress={() => {}}>
       <ThemedText type="subtitle" style={styles.cardName}>
         {name}
       </ThemedText>
@@ -72,13 +58,8 @@ function BusinessCard({
 }
 
 export const LocalBusinessScreen = () => {
-  const { colorScheme } = useColorScheme();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
+  const tint = useThemeColor({}, "tint");
+  const { refreshing, onRefresh } = useRefresh();
 
   return (
     <ThemedSafeAreaView>
@@ -90,8 +71,8 @@ export const LocalBusinessScreen = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint}
-            colors={[colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint]}
+            tintColor={tint}
+            colors={[tint]}
           />
         }
       >
@@ -116,11 +97,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 24,
-  },
-  cardImagePlaceholder: {
-    height: 120,
-    alignItems: "center",
-    justifyContent: "center",
   },
   cardName: {
     marginBottom: 2,
