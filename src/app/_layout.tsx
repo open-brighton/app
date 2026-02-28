@@ -22,6 +22,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SplashScreen } from "@/components/SplashScreen";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ColorSchemeProvider, useColorScheme } from "@/contexts/ColorSchemeContext";
+import { ChatProvider, useChatContext } from "@/contexts/ChatContext";
 import { Colors } from "@/constants/Colors";
 import config from "@/constants/config";
 import { client } from "@/lib/apollo";
@@ -84,7 +85,7 @@ function DrawerHeaderLeft() {
   return (
     <TouchableOpacity
       onPress={() => navigation.openDrawer()}
-      style={{ marginLeft: 16 }}
+      style={{ marginLeft: 16, marginRight: 8 }}
       accessibilityRole="button"
       accessibilityLabel="Open menu"
     >
@@ -118,8 +119,28 @@ function DrawerHeaderRight() {
   const segments = useSegments() as string[];
   const { colorScheme } = useColorScheme();
   const color = colorScheme === "dark" ? Colors.dark.text : Colors.light.text;
+  const tintColor = colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint;
+
   const isProfileScreen =
     segments.includes("profile") && !segments.includes("settings");
+  const isChatScreen = segments.includes("chat");
+
+  const { messages, resetChat } = useChatContext();
+  const hasMessages = messages.length > 0;
+
+  if (isChatScreen && hasMessages) {
+    return (
+      <TouchableOpacity
+        onPress={resetChat}
+        style={{ marginRight: 16, padding: 4 }}
+        accessibilityRole="button"
+        accessibilityLabel="Reset chat"
+      >
+        <Text style={{ fontSize: 16, fontWeight: "600", color: tintColor }}>Reset</Text>
+      </TouchableOpacity>
+    );
+  }
+
   if (!isProfileScreen) return null;
   return (
     <Link href="/settings" asChild>
@@ -212,16 +233,17 @@ export const RootLayout = () => {
         urlScheme={Linking.createURL("")}
       >
         <ColorSchemeProvider>
-          <ErrorBoundary>
-            {showSplash ? (
-              <SplashScreen
-                shouldFadeOut={true}
-                onFinish={() => setShowSplash(false)}
-              />
-            ) : (
+          <ChatProvider>
+            <ErrorBoundary>
               <ThemedRootContent />
-            )}
-          </ErrorBoundary>
+              {showSplash && (
+                <SplashScreen
+                  shouldFadeOut={true}
+                  onFinish={() => setShowSplash(false)}
+                />
+              )}
+            </ErrorBoundary>
+          </ChatProvider>
         </ColorSchemeProvider>
       </StripeProvider>
     </ApolloProvider>

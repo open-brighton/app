@@ -55,7 +55,7 @@ export function SplashScreen({
 
 const styles = StyleSheet.create({
   staticView: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
   },
   animatedView: {
     ...StyleSheet.absoluteFillObject,

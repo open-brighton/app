@@ -1,6 +1,7 @@
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
+import { useChatContext } from "@/contexts/ChatContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { CHAT } from "@/lib/graphql/mutations";
@@ -15,11 +16,20 @@ import {
   ListRenderItem,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   TextInput,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Markdown from "react-native-markdown-display";
+
+const EXAMPLE_PROMPTS = [
+  "What's on in Brighton this weekend?",
+  "Where can I park in Brighton?",
+  "What are the best beaches nearby?",
+  "How do I contact the council?",
+];
 
 const USER_BUBBLE_COLOR_LIGHT = "#0a7ea4";
 const USER_BUBBLE_COLOR_DARK = "#fff";
@@ -38,7 +48,8 @@ function ChatMessageBubble({ item }: { item: Message }) {
     : colorScheme === "dark"
       ? ASSISTANT_BUBBLE_DARK
       : ASSISTANT_BUBBLE_LIGHT;
-  const textColor = isUser ? "#fff" : undefined;
+  const userTextColor = isUser ? "#fff" : undefined;
+  const assistantTextColor = colorScheme === "dark" ? "#f3f4f6" : "#111827";
 
   return (
     <View
@@ -50,13 +61,50 @@ function ChatMessageBubble({ item }: { item: Message }) {
       accessibilityRole="text"
     >
       <View style={[styles.bubble, { backgroundColor }]}>
-        <ThemedText
-          style={[styles.bubbleText, textColor ? { color: textColor } : undefined]}
-          lightColor={textColor}
-          darkColor={textColor}
-        >
-          {item.content}
-        </ThemedText>
+        {isUser ? (
+          <ThemedText
+            style={[styles.bubbleText, { color: userTextColor }]}
+            lightColor={userTextColor}
+            darkColor={userTextColor}
+          >
+            {item.content}
+          </ThemedText>
+        ) : (
+          <Markdown
+            style={{
+              body: {
+                color: assistantTextColor,
+                fontSize: 16,
+                lineHeight: 22,
+                margin: 0,
+              },
+              paragraph: { marginTop: 0, marginBottom: 6 },
+              bullet_list: { marginVertical: 4 },
+              ordered_list: { marginVertical: 4 },
+              code_inline: {
+                backgroundColor: colorScheme === "dark" ? "#1f2937" : "#d1d5db",
+                borderRadius: 4,
+                paddingHorizontal: 4,
+                fontFamily: "monospace",
+              },
+              fence: {
+                backgroundColor: colorScheme === "dark" ? "#1f2937" : "#d1d5db",
+                borderRadius: 8,
+                padding: 10,
+                marginVertical: 6,
+              },
+              code_block: {
+                backgroundColor: colorScheme === "dark" ? "#1f2937" : "#d1d5db",
+                borderRadius: 8,
+                padding: 10,
+                marginVertical: 6,
+              },
+              strong: { fontWeight: "700" },
+            }}
+          >
+            {item.content}
+          </Markdown>
+        )}
       </View>
     </View>
   );
@@ -77,7 +125,7 @@ function TypingIndicator() {
 }
 
 export function ChatScreen() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages, setMessages } = useChatContext();
   const [inputText, setInputText] = useState("");
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -108,49 +156,56 @@ export function ChatScreen() {
     };
   }, []);
 
+  const sendMessage = useCallback(
+    (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || isAssistantTyping) return;
+
+      const userMessage: Message = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: trimmed,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [userMessage, ...prev]);
+      setInputText("");
+      setIsAssistantTyping(true);
+
+      const messagesForApi = [...messages, userMessage]
+        .slice()
+        .reverse()
+        .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+
+      sendChat({ variables: { input: { messages: messagesForApi } } })
+        .then(({ data }) => {
+          const reply = data?.chat ?? "";
+          const assistantMessage: Message = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content: reply,
+            timestamp: new Date().toISOString(),
+          };
+          setMessages((prev) => [assistantMessage, ...prev]);
+        })
+        .catch(() => {
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content: "Something went wrong. Please try again.",
+            timestamp: new Date().toISOString(),
+          };
+          setMessages((prev) => [errorMessage, ...prev]);
+        })
+        .finally(() => {
+          setIsAssistantTyping(false);
+        });
+    },
+    [isAssistantTyping, messages, sendChat],
+  );
+
   const handleSend = useCallback(() => {
-    const trimmed = inputText.trim();
-    if (!trimmed || isAssistantTyping) return;
-
-    const userMessage: Message = {
-      id: `user-${Date.now()}`,
-      role: "user",
-      content: trimmed,
-      timestamp: new Date().toISOString(),
-    };
-    setMessages((prev) => [userMessage, ...prev]);
-    setInputText("");
-    setIsAssistantTyping(true);
-
-    const messagesForApi = [...messages, userMessage]
-      .slice()
-      .reverse()
-      .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
-
-    sendChat({ variables: { input: { messages: messagesForApi } } })
-      .then(({ data }) => {
-        const reply = data?.chat ?? "";
-        const assistantMessage: Message = {
-          id: `assistant-${Date.now()}`,
-          role: "assistant",
-          content: reply,
-          timestamp: new Date().toISOString(),
-        };
-        setMessages((prev) => [assistantMessage, ...prev]);
-      })
-      .catch(() => {
-        const errorMessage: Message = {
-          id: `error-${Date.now()}`,
-          role: "assistant",
-          content: "Something went wrong. Please try again.",
-          timestamp: new Date().toISOString(),
-        };
-        setMessages((prev) => [errorMessage, ...prev]);
-      })
-      .finally(() => {
-        setIsAssistantTyping(false);
-      });
-  }, [inputText, isAssistantTyping]);
+    sendMessage(inputText);
+  }, [inputText, sendMessage]);
 
   const canSend = inputText.trim().length > 0 && !isAssistantTyping;
 
@@ -166,8 +221,7 @@ export function ChatScreen() {
     </View>
   );
 
-  const inputRowMarginBottom =
-    keyboardHeight > 0 ? keyboardHeight - 12 : Math.max(8, insets.bottom - 16);
+  const inputRowMarginBottom = keyboardHeight > 0 ? keyboardHeight - insets.bottom : 0;
 
   return (
     <ThemedSafeAreaView edges={["top", "left", "right"]}>
@@ -187,15 +241,44 @@ export function ChatScreen() {
           keyboardShouldPersistTaps="handled"
         />
 
-        <View
-          style={[
-            styles.inputRow,
-            {
-              borderTopColor: inputBorderColor,
-              marginBottom: inputRowMarginBottom,
-            },
-          ]}
-        >
+        <View style={styles.bottomSection}>
+          {messages.length === 0 && !isAssistantTyping && (
+            <>
+              <ThemedText style={styles.promptsLabel}>Examples</ThemedText>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.promptsRow}
+                contentContainerStyle={styles.promptsContent}
+                keyboardShouldPersistTaps="handled"
+              >
+                {EXAMPLE_PROMPTS.map((prompt) => (
+                  <Pressable
+                    key={prompt}
+                    onPress={() => sendMessage(prompt)}
+                    style={({ pressed }) => [
+                      styles.promptChip,
+                      { borderColor: inputBorderColor, opacity: pressed ? 0.7 : 1 },
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={prompt}
+                  >
+                    <ThemedText style={styles.promptChipText}>{prompt}</ThemedText>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </>
+          )}
+
+          <View
+            style={[
+              styles.inputRow,
+              {
+                borderTopColor: inputBorderColor,
+                marginBottom: inputRowMarginBottom,
+              },
+            ]}
+          >
           <TextInput
             style={[
               styles.input,
@@ -234,6 +317,7 @@ export function ChatScreen() {
               Send
             </ThemedText>
           </Pressable>
+          </View>
         </View>
       </View>
     </ThemedSafeAreaView>
@@ -283,9 +367,39 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
   },
+  bottomSection: {
+    flexShrink: 0,
+  },
+  promptsLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    opacity: 0.5,
+  },
+  promptsRow: {
+    flexShrink: 0,
+  },
+  promptsContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    gap: 8,
+    alignItems: "flex-start",
+  },
+  promptChip: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  promptChipText: {
+    fontSize: 14,
+  },
   inputRow: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12,
@@ -304,8 +418,8 @@ const styles = StyleSheet.create({
   sendButton: {
     justifyContent: "center",
     alignItems: "center",
+    height: 44,
     paddingHorizontal: 20,
-    paddingVertical: 12,
     borderRadius: 22,
   },
   sendButtonText: {
