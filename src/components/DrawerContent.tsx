@@ -38,6 +38,11 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     props.navigation.closeDrawer();
   };
 
+  const openBCSDWebsite = () => {
+    Linking.openURL("https://www.bcsd.org/");
+    props.navigation.closeDrawer();
+  };
+
   return (
     <View
       style={[styles.container, backgroundStyle, { paddingTop: insets.top }]}
@@ -187,11 +192,28 @@ export function DrawerContent(props: DrawerContentComponentProps) {
             accessibilityRole="link"
             accessibilityLabel="Brighton Website"
           >
-            <IconSymbol name="globe" size={24} color={iconColor} />
+            <IconSymbol name="arrow.up.right.square.fill" size={24} color={iconColor} />
             <Text style={[styles.label, { color: textColor }]}>
               Brighton Website
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={openBCSDWebsite}
+            accessibilityRole="link"
+            accessibilityLabel="Brighton Central School District"
+          >
+            <IconSymbol name="arrow.up.right.square.fill" size={24} color={iconColor} />
+            <Text style={[styles.label, { color: textColor }]}>
+              Brighton Schools
+            </Text>
+          </TouchableOpacity>
+          <View
+            style={[styles.divider, { backgroundColor: colors.icon }]}
+          />
+          <Text style={[styles.sectionHeader, { color: colors.icon }]}>
+            Legal
+          </Text>
           <TouchableOpacity
             style={styles.item}
             onPress={() => handleNavigate("/privacy")}

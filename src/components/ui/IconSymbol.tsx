@@ -38,6 +38,8 @@ const MAPPING = {
   "building.2.fill": "store",
   "calendar": "event",
   "book.fill": "library-books",
+  "arrow.up.right.square.fill": "open-in-new",
+  "graduationcap.fill": "school",
 } as IconMapping;
 
 /**
