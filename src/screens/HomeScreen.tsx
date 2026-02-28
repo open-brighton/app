@@ -1,8 +1,8 @@
+import { gql, useQuery } from "@apollo/client";
 import React from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 
-import { Card } from "@/components/Card";
-import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
+import { FEED_CARD_FRAGMENT, FeedCard, FeedCard_feedItem } from "@/components/FeedCard";
 import { HelloWave } from "@/components/HelloWave";
 import { LottieAnimation } from "@/components/LottieAnimation";
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
@@ -10,8 +10,41 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { useRefresh } from "@/hooks/useRefresh";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { FeedItemCategory } from "@/lib/graphql/types";
+
+const GET_FEED = gql`
+  ${FEED_CARD_FRAGMENT}
+  query GetFeed($first: Int, $after: String, $category: [FeedItemCategory!]) {
+    feed(first: $first, after: $after, category: $category) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node {
+          ...FeedCard_feedItem
+        }
+      }
+    }
+  }
+`;
+
+type GetFeedData = {
+  feed: {
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    edges: Array<{ node: FeedCard_feedItem }>;
+  };
+};
+
+type GetFeedVars = {
+  first?: number;
+  after?: string;
+  category?: FeedItemCategory[];
+};
+
+const PAGE_SIZE = 20;
+const POLL_INTERVAL_MS = 60_000;
 
 /** Parallax + welcome content for NUX (e.g. welcome step). */
 export function HomeParallaxContent({
@@ -56,64 +89,68 @@ export function HomeParallaxContent({
   );
 }
 
-const FEED_CARDS = [
-  { id: "1", title: "Library Event", subtitle: "Story time & activities" },
-  { id: "2", title: "Town Hall Meeting", subtitle: "Community discussion" },
-  { id: "3", title: "Bulk Yard Pickup", subtitle: "Curbside collection dates" },
-] as const;
-
-function FeedCard({ title, subtitle }: { title: string; subtitle: string }) {
-  return (
-    <Card imageArea={<CardImagePlaceholder icon="image" />} onPress={() => {}}>
-      <ThemedText type="subtitle" style={styles.cardTitle}>
-        {title}
-      </ThemedText>
-      <ThemedText style={styles.cardSubtitle}>{subtitle}</ThemedText>
-    </Card>
-  );
-}
-
 export const HomeScreen = () => {
   const tint = useThemeColor({}, "tint");
-  const { refreshing, onRefresh } = useRefresh();
+
+  const { data, loading, error, refetch, fetchMore } = useQuery<GetFeedData, GetFeedVars>(
+    GET_FEED,
+    {
+      variables: { first: PAGE_SIZE },
+      pollInterval: POLL_INTERVAL_MS,
+    }
+  );
+
+  const items = data?.feed.edges.map((e) => e.node) ?? [];
+  const pageInfo = data?.feed.pageInfo;
+
+  const handleLoadMore = () => {
+    if (!pageInfo?.hasNextPage || !pageInfo.endCursor) return;
+    fetchMore({ variables: { after: pageInfo.endCursor } });
+  };
+
+  if (error) {
+    return (
+      <ThemedSafeAreaView style={styles.centered}>
+        <ThemedText>Failed to load feed.</ThemedText>
+      </ThemedSafeAreaView>
+    );
+  }
 
   return (
     <ThemedSafeAreaView>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <FeedCard feedItem={item} />}
+        contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={tint}
-            colors={[tint]}
-          />
+        refreshing={loading && items.length === 0}
+        onRefresh={() => refetch({ first: PAGE_SIZE })}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          loading && items.length > 0 ? (
+            <ActivityIndicator color={tint} style={styles.footer} />
+          ) : null
         }
-      >
-        {FEED_CARDS.map((card) => (
-          <FeedCard key={card.id} title={card.title} subtitle={card.subtitle} />
-        ))}
-      </ScrollView>
+      />
     </ThemedSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
+  listContent: {
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 24,
   },
-  cardTitle: {
-    marginBottom: 2,
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  cardSubtitle: {
-    opacity: 0.8,
+  footer: {
+    paddingVertical: 16,
   },
 });
 

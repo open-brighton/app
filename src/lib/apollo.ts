@@ -5,6 +5,7 @@ import {
   InMemoryCache,
   createHttpLink,
 } from "@apollo/client";
+import { relayStylePagination } from "@apollo/client/utilities";
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
@@ -31,5 +32,15 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
 
 export const client = new ApolloClient({
   link: ApolloLink.from([errorLink, httpLink]),
-  cache: new InMemoryCache(),
-}); 
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          feed: relayStylePagination(["category"]),
+          events: relayStylePagination(["category"]),
+          businesses: relayStylePagination(["category"]),
+        },
+      },
+    },
+  }),
+});

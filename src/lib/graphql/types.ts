@@ -1,3 +1,24 @@
+// Shared GraphQL enum types — kept in sync with graphql-service/graph/schema.graphqls.
+// Fragment-specific types live co-located with their components.
+
+export type FeedItemCategory = "COMMUNITY_EVENT" | "ANNOUNCEMENT" | "NEWS" | "ALERT";
+
+export type EventCategory = "COMMUNITY" | "ARTS" | "SPORTS" | "FOOD" | "ENVIRONMENT" | "POLITICS";
+
+export type BusinessCategory =
+  | "BAKERY"
+  | "CAFE"
+  | "RESTAURANT"
+  | "MUSEUM"
+  | "RETAIL"
+  | "HEALTH_FOOD"
+  | "VINTAGE"
+  | "CHOCOLATIER";
+
+export type DonateSubscriptionInterval = "MONTHLY" | "YEARLY";
+
+// ─── Mutation types (shared by form components) ───────────────────────────────
+
 export interface SubmitContactInput {
   email: string;
   name: string;
@@ -5,7 +26,7 @@ export interface SubmitContactInput {
 }
 
 export interface SubmitContactResponse {
-  submitContact: string;
+  submitContact: boolean;
 }
 
 export interface SubmitFeedbackInput {
@@ -15,7 +36,7 @@ export interface SubmitFeedbackInput {
 }
 
 export interface SubmitFeedbackResponse {
-  submitFeedback: string;
+  submitFeedback: boolean;
 }
 
 export interface CreateDonatePaymentIntentInput {
@@ -26,12 +47,8 @@ export interface CreateDonatePaymentIntentInput {
 }
 
 export interface CreateDonatePaymentIntentResponse {
-  createDonatePaymentIntent: {
-    clientSecret: string;
-  };
+  createDonatePaymentIntent: { clientSecret: string };
 }
-
-export type DonateSubscriptionInterval = "MONTHLY" | "YEARLY";
 
 export interface CreateDonateSubscriptionInput {
   amount: number;
@@ -42,9 +59,7 @@ export interface CreateDonateSubscriptionInput {
 }
 
 export interface CreateDonateSubscriptionResponse {
-  createDonateSubscription: {
-    clientSecret: string;
-  };
+  createDonateSubscription: { clientSecret: string };
 }
 
 export interface ChatMessageInput {

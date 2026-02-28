@@ -1,114 +1,108 @@
+import { gql, useQuery } from "@apollo/client";
 import React from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 
-import { Card } from "@/components/Card";
-import { CardImagePlaceholder } from "@/components/CardImagePlaceholder";
+import {
+  BUSINESS_CARD_FRAGMENT,
+  BusinessCard,
+  BusinessCard_business,
+} from "@/components/BusinessCard";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
-import { useRefresh } from "@/hooks/useRefresh";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { BusinessCategory } from "@/lib/graphql/types";
 
-const BUSINESS_CARDS = [
-  {
-    id: "1",
-    name: "The Flour Pot Bakery",
-    category: "Bakery · Café",
-    address: "40 Sydney St, North Laine",
-  },
-  {
-    id: "2",
-    name: "Choccywoccydoodah",
-    category: "Chocolatier · Gift Shop",
-    address: "24 Duke St, Brighton",
-  },
-  {
-    id: "3",
-    name: "Snoopers Paradise",
-    category: "Vintage · Antiques",
-    address: "7-8 Kensington Gardens",
-  },
-  {
-    id: "4",
-    name: "Infinity Foods",
-    category: "Health Food · Organic",
-    address: "25 North Rd, Brighton",
-  },
-  {
-    id: "5",
-    name: "Brighton Fishing Museum",
-    category: "Museum · Heritage",
-    address: "201 King's Rd Arches",
-  },
-] as const;
+const GET_BUSINESSES = gql`
+  ${BUSINESS_CARD_FRAGMENT}
+  query GetBusinesses($first: Int, $after: String, $category: [BusinessCategory!]) {
+    businesses(first: $first, after: $after, category: $category) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node {
+          ...BusinessCard_business
+        }
+      }
+    }
+  }
+`;
 
-function BusinessCard({
-  name,
-  category,
-  address,
-}: { name: string; category: string; address: string }) {
-  return (
-    <Card imageArea={<CardImagePlaceholder icon="storefront" />} onPress={() => {}}>
-      <ThemedText type="subtitle" style={styles.cardName}>
-        {name}
-      </ThemedText>
-      <ThemedText style={styles.cardCategory}>{category}</ThemedText>
-      <ThemedText style={styles.cardAddress}>{address}</ThemedText>
-    </Card>
-  );
-}
+type GetBusinessesData = {
+  businesses: {
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    edges: Array<{ node: BusinessCard_business }>;
+  };
+};
+
+type GetBusinessesVars = {
+  first?: number;
+  after?: string;
+  category?: BusinessCategory[];
+};
+
+const PAGE_SIZE = 20;
 
 export const LocalBusinessScreen = () => {
   const tint = useThemeColor({}, "tint");
-  const { refreshing, onRefresh } = useRefresh();
+
+  const { data, loading, error, refetch, fetchMore } = useQuery<
+    GetBusinessesData,
+    GetBusinessesVars
+  >(GET_BUSINESSES, { variables: { first: PAGE_SIZE } });
+
+  const items = data?.businesses.edges.map((e) => e.node) ?? [];
+  const pageInfo = data?.businesses.pageInfo;
+
+  const handleLoadMore = () => {
+    if (!pageInfo?.hasNextPage || !pageInfo.endCursor) return;
+    fetchMore({ variables: { after: pageInfo.endCursor } });
+  };
+
+  if (error) {
+    return (
+      <ThemedSafeAreaView style={styles.centered}>
+        <ThemedText>Failed to load businesses.</ThemedText>
+      </ThemedSafeAreaView>
+    );
+  }
 
   return (
     <ThemedSafeAreaView>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <BusinessCard business={item} />}
+        contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={tint}
-            colors={[tint]}
-          />
+        refreshing={loading && items.length === 0}
+        onRefresh={() => refetch({ first: PAGE_SIZE })}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          loading && items.length > 0 ? (
+            <ActivityIndicator color={tint} style={styles.footer} />
+          ) : null
         }
-      >
-        {BUSINESS_CARDS.map((card) => (
-          <BusinessCard
-            key={card.id}
-            name={card.name}
-            category={card.category}
-            address={card.address}
-          />
-        ))}
-      </ScrollView>
+      />
     </ThemedSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
+  listContent: {
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 24,
   },
-  cardName: {
-    marginBottom: 2,
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  cardCategory: {
-    opacity: 0.7,
-    fontSize: 13,
-  },
-  cardAddress: {
-    opacity: 0.55,
-    fontSize: 12,
-    marginTop: 2,
+  footer: {
+    paddingVertical: 16,
   },
 });
 

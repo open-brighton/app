@@ -1,7 +1,9 @@
+import { gql, useQuery } from "@apollo/client";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,8 +16,38 @@ import { Map } from "@/components/Map";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import { BUSINESSES } from "@/data/businesses";
 import { useColorScheme } from "@/hooks/useColorScheme";
+
+const GET_BUSINESS = gql`
+  query GetBusiness($slug: String!) {
+    business(slug: $slug) {
+      id
+      slug
+      name
+      category
+      address
+      description
+      longitude
+      latitude
+      accentColor
+    }
+  }
+`;
+
+type BusinessDetail = {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  address: string;
+  description: string;
+  longitude: number;
+  latitude: number;
+  accentColor: string;
+};
+
+type GetBusinessData = { business: BusinessDetail | null };
+type GetBusinessVars = { slug: string };
 
 const MAP_HEIGHT = 220;
 
@@ -26,9 +58,23 @@ export function LocalBusinessDetailScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const business = BUSINESSES.find((b) => b.slug === slug);
+  const { data, loading, error } = useQuery<GetBusinessData, GetBusinessVars>(GET_BUSINESS, {
+    variables: { slug },
+    skip: !slug,
+  });
 
-  if (!business) {
+  const iconColor = isDark ? Colors.dark.icon : Colors.light.icon;
+  const subtleText = isDark ? "rgba(236,237,238,0.6)" : "rgba(17,24,28,0.55)";
+
+  if (loading) {
+    return (
+      <ThemedSafeAreaView style={styles.centered}>
+        <ActivityIndicator />
+      </ThemedSafeAreaView>
+    );
+  }
+
+  if (error || !data?.business) {
     return (
       <ThemedSafeAreaView edges={["top", "left", "right", "bottom"]}>
         <View style={styles.notFound}>
@@ -38,10 +84,8 @@ export function LocalBusinessDetailScreen() {
     );
   }
 
-  const iconColor = isDark ? Colors.dark.icon : Colors.light.icon;
-  const subtleText = isDark
-    ? "rgba(236,237,238,0.6)"
-    : "rgba(17,24,28,0.55)";
+  const business = data.business;
+  const coordinates: [number, number] = [business.longitude, business.latitude];
 
   return (
     <View style={styles.root}>
@@ -100,10 +144,10 @@ export function LocalBusinessDetailScreen() {
           </ThemedText>
           <View style={[styles.mapWrapper, { width: width - 40 }]}>
             <Map
-              initialCenter={business.coordinates}
+              initialCenter={coordinates}
               initialZoom={15}
               showUserLocation={false}
-              markerCoordinate={business.coordinates}
+              markerCoordinate={coordinates}
               width={width - 40}
               height={MAP_HEIGHT}
             />
@@ -175,6 +219,11 @@ const styles = StyleSheet.create({
     height: MAP_HEIGHT,
     borderRadius: 12,
     overflow: "hidden",
+  },
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   notFound: {
     flex: 1,
