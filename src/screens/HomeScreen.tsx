@@ -1,5 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Platform, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 
 import { Card } from "@/components/Card";
 import { HelloWave } from "@/components/HelloWave";
@@ -97,12 +98,28 @@ function FeedCard({
 }
 
 export const HomeScreen = () => {
+  const { colorScheme } = useColorScheme();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
+
   return (
     <ThemedSafeAreaView>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint}
+            colors={[colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint]}
+          />
+        }
       >
         {FEED_CARDS.map((card) => (
           <FeedCard

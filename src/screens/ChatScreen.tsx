@@ -228,7 +228,7 @@ export function ChatScreen() {
   const inputRowMarginBottom = keyboardHeight > 0 ? keyboardHeight - insets.bottom : 0;
 
   return (
-    <ThemedSafeAreaView edges={["top", "left", "right"]}>
+    <ThemedSafeAreaView edges={["left", "right"]}>
       <View style={styles.keyboardView}>
         <View style={styles.listContainer}>
           {messages.length === 0 && !isAssistantTyping && (

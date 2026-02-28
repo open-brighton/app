@@ -20,6 +20,8 @@ export type MapProps = {
   initialZoom?: number;
   showUserLocation?: boolean;
   showBoundary?: boolean;
+  /** When provided, renders a pin marker at the given [longitude, latitude]. */
+  markerCoordinate?: [number, number];
   onMapPress?: (event: any) => void;
   onMapLoad?: () => void;
   /** Explicit dimensions for the map (e.g. from parent). Helps MapView layout on Android. */
@@ -33,6 +35,7 @@ export function Map({
   initialZoom = 12,
   showUserLocation = true,
   showBoundary = false,
+  markerCoordinate,
   onMapPress,
   onMapLoad,
   width: widthProp,
@@ -105,6 +108,15 @@ export function Map({
 
         {showUserLocation && (
           <Mapbox.UserLocation showsUserHeadingIndicator={true} />
+        )}
+
+        {markerCoordinate && (
+          <Mapbox.PointAnnotation
+            id="map-marker"
+            coordinate={markerCoordinate}
+          >
+            <View style={styles.markerDot} />
+          </Mapbox.PointAnnotation>
         )}
 
         {showBoundary && (
@@ -188,5 +200,13 @@ const styles = StyleSheet.create({
   errorBannerText: {
     fontSize: 14,
     textAlign: "center",
+  },
+  markerDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "#0a7ea4",
+    borderWidth: 3,
+    borderColor: "#fff",
   },
 });
