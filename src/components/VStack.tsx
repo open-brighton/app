@@ -20,16 +20,11 @@ export function VStack({
       style={[
         style,
         { flexDirection: "column", gap },
-        container && { paddingHorizontal: 16 },
+        container && { paddingHorizontal: 16, paddingTop: 16 },
       ]}
     >
       {childrenArray.map((child, idx) => (
-        <View
-          key={idx}
-          style={
-            idx < childrenArray.length - 1 ? { marginBottom: gap } : undefined
-          }
-        >
+        <View key={idx}>
           {child}
         </View>
       ))}

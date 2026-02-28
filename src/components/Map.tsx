@@ -2,6 +2,8 @@ import { config } from "@/constants/config";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Mapbox from "@rnmapbox/maps";
 import React, { useEffect, useState } from "react";
+import type { Feature } from "geojson";
+import brightonBoundary from "@/data/brighton-boundary.json";
 import {
   Platform,
   StyleSheet,
@@ -17,6 +19,7 @@ export type MapProps = {
   initialCenter?: [number, number]; // [longitude, latitude]
   initialZoom?: number;
   showUserLocation?: boolean;
+  showBoundary?: boolean;
   onMapPress?: (event: any) => void;
   onMapLoad?: () => void;
   /** Explicit dimensions for the map (e.g. from parent). Helps MapView layout on Android. */
@@ -29,6 +32,7 @@ export function Map({
   initialCenter = [-77.5855, 43.1334], // Brighton, NY coordinates
   initialZoom = 12,
   showUserLocation = true,
+  showBoundary = false,
   onMapPress,
   onMapLoad,
   width: widthProp,
@@ -101,6 +105,22 @@ export function Map({
 
         {showUserLocation && (
           <Mapbox.UserLocation showsUserHeadingIndicator={true} />
+        )}
+
+        {showBoundary && (
+          <Mapbox.ShapeSource
+            id="brighton-boundary-source"
+            shape={brightonBoundary as unknown as Feature}
+          >
+            <Mapbox.FillLayer
+              id="brighton-boundary-fill"
+              style={{ fillColor: "#4A90D9", fillOpacity: 0.15 }}
+            />
+            <Mapbox.LineLayer
+              id="brighton-boundary-outline"
+              style={{ lineColor: "#4A90D9", lineWidth: 2 }}
+            />
+          </Mapbox.ShapeSource>
         )}
       </Mapbox.MapView>
 

@@ -9,7 +9,7 @@ export const ExploreScreen = () => {
   const mapHeight = height - HEADER_OFFSET;
   return (
     <View style={[styles.container, { width, height: mapHeight }]} collapsable={false}>
-      <Map showUserLocation={true} width={width} height={mapHeight} />
+      <Map showUserLocation={true} showBoundary={true} width={width} height={mapHeight} />
     </View>
   );
 };

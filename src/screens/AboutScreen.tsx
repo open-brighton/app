@@ -73,7 +73,7 @@ export const AboutScreen = () => {
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { paddingTop: 8, paddingBottom: 48 },
+  content: { paddingTop: 16, paddingBottom: 48 },
   lottieContainer: {
     height: 140,
     alignItems: "center",

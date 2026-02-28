@@ -1,3 +1,4 @@
+import { FloatingFooter } from "@/components/FloatingFooter";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { VStack } from "@/components/VStack";
@@ -327,11 +328,13 @@ export function DonateForm() {
         error={errors.email?.message}
       />
 
-      <ThemedButton
-        title={loading ? "Preparing..." : "Donate"}
-        onPress={handleSubmit(onSubmit)}
-        disabled={loading}
-      />
+      <FloatingFooter>
+        <ThemedButton
+          title={loading ? "Preparing..." : "Donate"}
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading}
+        />
+      </FloatingFooter>
     </VStack>
   );
 }

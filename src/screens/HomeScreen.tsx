@@ -104,9 +104,6 @@ export const HomeScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedText type="title" style={styles.feedTitle}>
-          Feed
-        </ThemedText>
         {FEED_CARDS.map((card) => (
           <FeedCard
             key={card.id}
@@ -125,11 +122,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingTop: 16,
     paddingBottom: 24,
-  },
-  feedTitle: {
-    marginBottom: 16,
   },
   cardImagePlaceholder: {
     height: 120,

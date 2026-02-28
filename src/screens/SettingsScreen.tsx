@@ -204,7 +204,9 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 16,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   section: {
     marginBottom: 30,

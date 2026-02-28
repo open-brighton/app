@@ -56,7 +56,10 @@ export function DrawerContent(props: DrawerContentComponentProps) {
       <View style={styles.contentWrapper}>
         <ScrollView
           style={styles.scrollContent}
-          contentContainerStyle={styles.scrollContentContainer}
+          contentContainerStyle={[
+            styles.scrollContentContainer,
+            { paddingBottom: insets.bottom + 16 },
+          ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
@@ -88,6 +91,42 @@ export function DrawerContent(props: DrawerContentComponentProps) {
           >
             <IconSymbol name="map.fill" size={24} color={iconColor} />
             <Text style={[styles.label, { color: textColor }]}>Explore</Text>
+          </TouchableOpacity>
+
+          <Text style={[styles.sectionHeader, { color: colors.icon }]}>
+            Community
+          </Text>
+
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => handleNavigate("/local-business")}
+            accessibilityRole="button"
+            accessibilityLabel="Local Business"
+          >
+            <IconSymbol name="building.2.fill" size={24} color={iconColor} />
+            <Text style={[styles.label, { color: textColor }]}>
+              Local Business
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => handleNavigate("/events")}
+            accessibilityRole="button"
+            accessibilityLabel="Events"
+          >
+            <IconSymbol name="calendar" size={24} color={iconColor} />
+            <Text style={[styles.label, { color: textColor }]}>Events</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => handleNavigate("/resources")}
+            accessibilityRole="button"
+            accessibilityLabel="Resources"
+          >
+            <IconSymbol name="book.fill" size={24} color={iconColor} />
+            <Text style={[styles.label, { color: textColor }]}>Resources</Text>
           </TouchableOpacity>
 
           <Text style={[styles.sectionHeader, { color: colors.icon }]}>
@@ -159,14 +198,10 @@ export function DrawerContent(props: DrawerContentComponentProps) {
             <IconSymbol name="heart.fill" size={24} color={iconColor} />
             <Text style={[styles.label, { color: textColor }]}>Donate</Text>
           </TouchableOpacity>
-        </ScrollView>
 
-        <View
-          style={[
-            styles.pinnedSection,
-            { borderTopColor: colors.icon, paddingBottom: insets.bottom },
-          ]}
-        >
+          <View
+            style={[styles.divider, { backgroundColor: colors.icon }]}
+          />
           <Text style={[styles.sectionHeader, { color: colors.icon }]}>
             Links
           </Text>
@@ -201,7 +236,7 @@ export function DrawerContent(props: DrawerContentComponentProps) {
               Terms & Conditions
             </Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -229,15 +264,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     flex: 1,
   },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginHorizontal: 12,
+    marginTop: 16,
+    opacity: 0.4,
+  },
   scrollContentContainer: {
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 16,
-  },
-  pinnedSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
   },
   item: {
     flexDirection: "row",

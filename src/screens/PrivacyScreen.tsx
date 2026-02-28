@@ -67,7 +67,7 @@ export const PrivacyScreen = () => {
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { paddingVertical: 24, paddingBottom: 48 },
+  content: { paddingTop: 16, paddingBottom: 48 },
   footer: {
     marginTop: 8,
     fontStyle: "italic",

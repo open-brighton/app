@@ -1,3 +1,4 @@
+import { LottieAnimation } from "@/components/LottieAnimation";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
@@ -7,7 +8,6 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { CHAT } from "@/lib/graphql/mutations";
 import type { ChatInput, ChatResponse } from "@/lib/graphql/types";
 import type { Message } from "@/types/chat";
-import { CHAT_EMPTY_PROMPT } from "@/types/chat";
 import { useMutation } from "@apollo/client";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -32,9 +32,9 @@ const EXAMPLE_PROMPTS = [
 ];
 
 const USER_BUBBLE_COLOR_LIGHT = "#0a7ea4";
-const USER_BUBBLE_COLOR_DARK = "#fff";
-const ASSISTANT_BUBBLE_LIGHT = "#e5e7eb";
-const ASSISTANT_BUBBLE_DARK = "#374151";
+const USER_BUBBLE_COLOR_DARK = "#c7aa3c";
+const ASSISTANT_BUBBLE_LIGHT = "#e8f4f8";
+const ASSISTANT_BUBBLE_DARK = "#1a3878";
 const INPUT_BORDER_LIGHT = "#ccc";
 const INPUT_BORDER_DARK = "#6b7280";
 
@@ -48,7 +48,11 @@ function ChatMessageBubble({ item }: { item: Message }) {
     : colorScheme === "dark"
       ? ASSISTANT_BUBBLE_DARK
       : ASSISTANT_BUBBLE_LIGHT;
-  const userTextColor = isUser ? "#fff" : undefined;
+  const userTextColor = isUser
+    ? colorScheme === "dark"
+      ? "#0b235a"
+      : "#fff"
+    : undefined;
   const assistantTextColor = colorScheme === "dark" ? "#f3f4f6" : "#111827";
 
   return (
@@ -99,6 +103,12 @@ function ChatMessageBubble({ item }: { item: Message }) {
                 padding: 10,
                 marginVertical: 6,
               },
+              heading1: { fontSize: 20, fontWeight: "700", marginBottom: 4, marginTop: 6 },
+              heading2: { fontSize: 18, fontWeight: "700", marginBottom: 4, marginTop: 6 },
+              heading3: { fontSize: 16, fontWeight: "700", marginBottom: 2, marginTop: 4 },
+              heading4: { fontSize: 15, fontWeight: "600", marginBottom: 2, marginTop: 4 },
+              heading5: { fontSize: 14, fontWeight: "600", marginBottom: 2, marginTop: 4 },
+              heading6: { fontSize: 14, fontWeight: "600", marginBottom: 2, marginTop: 4 },
               strong: { fontWeight: "700" },
             }}
           >
@@ -215,33 +225,30 @@ export function ChatScreen() {
 
   const listHeaderComponent = isAssistantTyping ? <TypingIndicator /> : null;
 
-  const listEmptyComponent = (
-    <View style={styles.emptyWrap}>
-      <ThemedText style={styles.emptyText}>{CHAT_EMPTY_PROMPT}</ThemedText>
-    </View>
-  );
-
   const inputRowMarginBottom = keyboardHeight > 0 ? keyboardHeight - insets.bottom : 0;
 
   return (
     <ThemedSafeAreaView edges={["top", "left", "right"]}>
       <View style={styles.keyboardView}>
-        <FlatList
-          data={messages}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          inverted
-          style={styles.list}
-          contentContainerStyle={[
-            styles.listContent,
-            messages.length === 0 && styles.listContentEmpty,
-          ]}
-          ListHeaderComponent={listHeaderComponent}
-          ListEmptyComponent={listEmptyComponent}
-          keyboardShouldPersistTaps="handled"
-        />
+        <View style={styles.listContainer}>
+          {messages.length === 0 && !isAssistantTyping && (
+            <View style={styles.emptyWrap}>
+              <LottieAnimation autoPlay loop style={styles.emptyLottie} />
+            </View>
+          )}
+          <FlatList
+            data={messages}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            inverted
+            style={styles.list}
+            contentContainerStyle={styles.listContent}
+            ListHeaderComponent={listHeaderComponent}
+            keyboardShouldPersistTaps="handled"
+          />
+        </View>
 
-        <View style={styles.bottomSection}>
+        <View style={[styles.bottomSection, { backgroundColor: background }]}>
           {messages.length === 0 && !isAssistantTyping && (
             <>
               <ThemedText style={styles.promptsLabel}>Examples</ThemedText>
@@ -328,6 +335,9 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
   },
+  listContainer: {
+    flex: 1,
+  },
   list: {
     flex: 1,
   },
@@ -335,10 +345,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     flexGrow: 1,
-  },
-  listContentEmpty: {
-    flex: 1,
-    justifyContent: "center",
   },
   bubbleWrap: {
     marginVertical: 4,
@@ -360,12 +366,14 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   emptyWrap: {
-    flex: 1,
-    justifyContent: "center",
+    ...StyleSheet.absoluteFillObject,
     alignItems: "center",
+    justifyContent: "center",
+    pointerEvents: "none",
   },
-  emptyText: {
-    fontSize: 18,
+  emptyLottie: {
+    width: 156,
+    height: 156,
   },
   bottomSection: {
     flexShrink: 0,

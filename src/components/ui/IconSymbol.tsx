@@ -35,6 +35,9 @@ const MAPPING = {
   "globe": "public",
   "lock.shield.fill": "security",
   "doc.text.fill": "description",
+  "building.2.fill": "store",
+  "calendar": "event",
+  "book.fill": "library-books",
 } as IconMapping;
 
 /**
