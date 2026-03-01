@@ -1,4 +1,4 @@
-import { config } from "@/constants/config";
+import config from "@/constants/config";
 import { MapFeature } from "@/contexts/ExploreContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
